@@ -41,6 +41,11 @@ if (seo.url === "glitch-default") {
 
 fastify.get("/voucher", async function (request, reply) {
 
+    const params = request.query;
+    const { language = 'cs', currency = 'Kč', amount = '1000', code = '000000000000' } = params;
+    console.log(language, currency, amount, code);
+
+
     const pdfDoc = await pdflib.PDFDocument.create()
 
     pdfDoc.registerFontkit(fontkit)
@@ -57,7 +62,7 @@ fastify.get("/voucher", async function (request, reply) {
 
 
 
-    const backgroundUrl = `${seo.url}/cz_voucher.png`
+    const backgroundUrl = `${seo.url}/${language}_voucher.png`
     const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
     const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
     const backgroundDims = backgroundImage.scale(0.5)
