@@ -46,7 +46,7 @@
 
                     <label for="code">
                         Jaký je kód poukazu?<br>
-                        <input id="code" name="code" required="required" type="text" value="{{code}}"><br>
+                        <input id="code" name="code" required="required" type="text" value="{{code}}" onkeyup="this.value=this.value.replace(/[^\d]/,'')"><br>
                     </label>
 
                     <label for="language">
