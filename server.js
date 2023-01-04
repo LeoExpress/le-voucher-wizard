@@ -14,7 +14,7 @@ const fastify = require("fastify")({
     logger: false,
 });
 
-// ADD FAVORITES ARRAY VARIABLE FROM TODO HERE
+// ADD FAVORITES ARRAY VARIABLE FROM
 
 // Setup our static files
 fastify.register(require("@fastify/static"), {
@@ -57,15 +57,15 @@ fastify.get("/voucher", async function (request, reply) {
 
 
 
-    const jpgUrl = 'https://cdn.glitch.global/928c0fcf-427b-4ef0-abe1-990d4bf24c1d/test_cz.png?v=1672752611969'
-    const jpgImageBytes = await fetch(jpgUrl).then((res) => res.arrayBuffer())
-    const jpgImage = await pdfDoc.embedPng(jpgImageBytes)
-    const jpgDims = jpgImage.scale(0.5)
-    page.drawImage(jpgImage, {
+    const backgroundUrl = `${seo.url}/cz_voucher.png`
+    const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
+    const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
+    const backgroundDims = backgroundImage.scale(0.5)
+    page.drawImage(backgroundImage, {
         x: 0,
         y: 0,
-        width: jpgImage.width,
-        height: jpgImage.height,
+        width: backgroundImage.width,
+        height: backgroundImage.height,
     })
 
     const humptyImageBytes = await fetch("https://static.wikia.nocookie.net/shrek/images/5/56/Humpty_Dumpty.png/revision/latest?cb=20111130083330").then((res) => res.arrayBuffer())
@@ -180,7 +180,7 @@ fastify.post("/", function (request, reply) {
 
 // Run the server and report out to the logs
 fastify.listen(
-    { port: process.env.PORT, host: "0.0.0.0" },
+    { port: process.env.PORT || 3000, host: '0.0.0.0' },
     function (err, address) {
         if (err) {
             console.error(err);
