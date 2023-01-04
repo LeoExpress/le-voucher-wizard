@@ -109,12 +109,14 @@ body {
 
 /* Page structure */
 .wrapper {
+
     min-height: var(--wrapper-height);
     display: grid;
     place-items: center;
     margin: 0 1rem;
 }
 .content {
+    width: 1200px;
     display: flex;
     flex-direction: column;
     align-items: left;
@@ -152,7 +154,7 @@ p {
     margin-left: 5px;
 }
 .color-search {
-    margin-bottom: 5rem;
+    margin-bottom: 8rem;
 }
 .color-form {
     width: 90%;

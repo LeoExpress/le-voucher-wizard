@@ -43,8 +43,8 @@ if (seo.url === "glitch-default") {
 fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', currency = 'Kč', amount = '1000', code = '000000000000' } = params;
-
+    const { language = 'cs', amount = '1000', code = '000000000000' } = params;
+    const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
 
     console.log('Creating PDF')
     const pdfDoc = await pdflib.PDFDocument.create()
@@ -72,7 +72,7 @@ fastify.get("/voucher", async function (request, reply) {
         height: backgroundImage.height,
     })
 
-    console.log('Drawing egg image')
+    /*console.log('Drawing egg image')
     const humptyImageBytes = await fetch("https://static.wikia.nocookie.net/shrek/images/5/56/Humpty_Dumpty.png/revision/latest?cb=20111130083330").then((res) => res.arrayBuffer())
     const humptyImage = await pdfDoc.embedPng(humptyImageBytes)
     const humptyDims = humptyImage.scale(0.5)
@@ -81,7 +81,7 @@ fastify.get("/voucher", async function (request, reply) {
         y: 0,
         width: 68,
         height: 100,
-    })
+    })*/
 
     console.log('Drawing text')
     page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {

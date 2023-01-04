@@ -27,16 +27,6 @@
     <!-- Import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css"/>
 
-    <!-- This is a handlebars IF statement
-         Checking for a custom "color" parameter from server.js -->
-    {{#if color}}
-        <!-- If there is a color value, update the style for the page title -->
-        <style>
-            .title {
-                color: {{color}};
-            }
-        </style>
-    {{/if}}
 </head>
 <body>
 <div class="wrapper">
@@ -52,11 +42,6 @@
                     <label for="amount">
                         Jaká je částka na poukazu?<br>
                         <input id="amount" name="amount" required="required" type="text" value="{{#if amount}}{{amount}}{{else}}1000{{/if}}"><br>
-                    </label>
-
-                    <label for="currency">
-                        Jaká je měna?<br>
-                        <input id="currency" name="currency" required="required" type="text" value="{{#if currency}}{{currency}}{{else}}Kč{{/if}}"><br>
                     </label>
 
                     <label for="code">
@@ -77,56 +62,25 @@
                         <br>
                     </label>
 
-                    {{#if url}}
-                        <a href="{{url}}" download="voucher.pdf" target="_blank">Stáhnout PDF</a>
-                    {{else}}
+
                     <button type="submit">Vygenerovat PDF</button>
-                    {{/if}}
+                    <a href="{{url}}" download="voucher.pdf" target="_blank" style="opacity: {{#if url}} 1 {{else}} 0 {{/if}}">Stáhnout PDF</a>
+
                 </form>
             </div>
-            <div style="background-color: #D0FFF1;  flex: 1">
+            <div style="background-color: #D0FFF1;  flex: 1; display: flex; flex-direction: column-reverse; align-items: center; justify-content: center;align-content: center">
                 {{#if url}}
-                    <embed src="{{url}}" width="100%" height="100%" frameBorder="100px"/>
+                    <h1 style="position: absolute">Chystám náhled...</h1>
+                    <embed src="{{url}}" width="100%" height="100%" frameBorder="100px" style="z-index: 1234"/>
                 {{/if}}
             </div>
         </div>
 
-        <div class="color-form">
-
-        </div>
-
-
-        <div class="illo-container">
-            <img src="https://www.gravatar.com/avatar/0074e9c5f7659c86e447cabe518dc0d3" class="illustration" alt="Node logo" style="border-radius: 10em"/>
-        </div>
-
-        <div class="instructions">
-            <h2>
-                Using this project
-            </h2>
-            <p>
-                This is the Glitch <strong>Hello Node</strong> project. You can
-                use it to build your own app. Check out README.md in the editor for
-                more info and next steps you can take!
-            </p>
-        </div>
-
     </div>
 </div>
-<!-- The footer holds our remix button — you can use it for structure or cut it out ✂ -->
-<footer class="footer">
-    <div class="links"></div>
-    <a
-            class="btn--remix"
-            target="_top"
-            href="https://glitch.com/edit/#!/remix/glitch-hello-node"
-    >
-        <img
-                src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
-                alt=""
-        />
-        Remix on Glitch
-    </a>
-</footer>
+
+<div style="position:absolute; right: 20px; bottom: 00px; height: 35px; overflow: hidden">
+    <img src="https://static.wikia.nocookie.net/shrek/images/5/56/Humpty_Dumpty.png" width="40px" alt="humpty"/>
+</div>
 </body>
 </html>
