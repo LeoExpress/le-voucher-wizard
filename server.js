@@ -148,7 +148,7 @@ fastify.post("/", function (request, reply) {
     let viewParams = { seo: seo };
 
     const { amount, currency, code, language } = request.body;
-    const url = `${seo.url}/voucher?amount=${amount}&currency=${currency}&code=${code}&language=${language}`;
+    const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}`;
     viewParams = {amount, currency, code, language, url, ...viewParams};
 
     console.log(viewParams)
