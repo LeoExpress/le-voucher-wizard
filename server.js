@@ -1,8 +1,3 @@
-/**
- * This is the main Node.js server script for your project
- * Check out the two endpoints this back-end API provides in fastify.get and fastify.post below
- */
-
 const path = require("path");
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const pdflib = require("pdf-lib");
@@ -43,11 +38,10 @@ fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
     const { language = 'cs', currency = 'Kč', amount = '1000', code = '000000000000' } = params;
-    console.log(language, currency, amount, code);
 
 
+    console.log('Creating PDF')
     const pdfDoc = await pdflib.PDFDocument.create()
-
     pdfDoc.registerFontkit(fontkit)
     const helveticaFont = await pdfDoc.embedFont(pdflib.StandardFonts.HelveticaBold)
     const timesRomanFont = await pdfDoc.embedFont(pdflib.StandardFonts.TimesRoman)
@@ -57,11 +51,10 @@ fastify.get("/voucher", async function (request, reply) {
     const page = pdfDoc.addPage()
     page.setSize(2598,1299)
     const { width, height } = page.getSize()
-    console.log(width, height)
     const fontSize = 30
 
 
-
+    console.log('Drawing image')
     const backgroundUrl = `${seo.url}/${language}_voucher.png`
     const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
     const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
@@ -73,6 +66,7 @@ fastify.get("/voucher", async function (request, reply) {
         height: backgroundImage.height,
     })
 
+    console.log('Drawing egg image')
     const humptyImageBytes = await fetch("https://static.wikia.nocookie.net/shrek/images/5/56/Humpty_Dumpty.png/revision/latest?cb=20111130083330").then((res) => res.arrayBuffer())
     const humptyImage = await pdfDoc.embedPng(humptyImageBytes)
     const humptyDims = humptyImage.scale(0.5)
@@ -83,29 +77,27 @@ fastify.get("/voucher", async function (request, reply) {
         height: 100,
     })
 
-    page.drawText('500 Kč', {
+    console.log('Drawing text')
+    page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
         x: 115,
         y: 445,
         size: 165,
         font: customFont,
-        //color: pdflib.rgb(205/255, 135/255, 47/255),
-        color: pdflib.rgb(255/255, 0, 0),
+        color: pdflib.rgb(205/255, 135/255, 47/255),
     })
 
-
-    page.drawText('214247813823848', {
+    console.log('Drawing text')
+    page.drawText(`${code}`, {
         x: 2477,
         y: 350,
         size: 90,
         font: timesRomanFont,
         rotate: pdflib.degrees(90),
-        color: pdflib.rgb(255/255, 0, 0),
     })
 
-
+    console.log('Saving PDF')
     const pdfBytes = await pdfDoc.save()
     const buf = Buffer.from(pdfBytes.buffer);
-    console.log(buf)
 
     reply
         .type('application/pdf')
