@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
 
     <!--
       This is the main Handlebars template for the site
@@ -8,9 +8,9 @@
       - The server script passes data in here and the Handlebars code builds it into the HTML page
     -->
 
-    <meta charset="utf-8" />
-    <link rel="icon" href="https://glitch.com/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8"/>
+    <link rel="icon" href="https://glitch.com/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <title>{{seo.title}}</title>
 
@@ -25,113 +25,108 @@
     <meta name="twitter:card" content="summary">
 
     <!-- Import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/style.css"/>
 
     <!-- This is a handlebars IF statement
          Checking for a custom "color" parameter from server.js -->
     {{#if color}}
-    <!-- If there is a color value, update the style for the page title -->
-    <style>
-      .title {
-        color: {{color}};
-      }
-    </style>
+        <!-- If there is a color value, update the style for the page title -->
+        <style>
+            .title {
+                color: {{color}};
+            }
+        </style>
     {{/if}}
-  </head>
-  <body>
-    <div class="wrapper">
-      <div class="content" role="main">
+</head>
+<body>
+<div class="wrapper">
+    <div class="content" role="main">
 
         <!-- This is the start of content for our page -->
-        <h1 class="title">Hello Node!</h1>
+        <h1 class="title">&nbsp;</h1>
 
-        <!-- Add text indicating that we've changed color OR had an error -->
-        {{#if color}}
-          <p class="color-info">
-            Now available in <b>{{color}}</b>!
-          </p>
-        {{/if}}
 
-        {{#if colorError}}
-          <p class="color-info">
+        <div style="display: flex">
+            <div class="color-form">
+                <form class="color-search" method="post">
+                    <label for="amount">
+                        Jaká je částka na poukazu?<br>
+                        <input id="amount" name="amount" required="required" type="text" value="{{#if amount}}{{amount}}{{else}}1000{{/if}}"><br>
+                    </label>
 
-            <!-- The server script passes colorError if the user submission can't be matched -->
-            Hmm. Couldn't find <b>"{{colorError}}"</b>.
-            <a href="?randomize=go">Try a random color?</a>
-          </p>
-        {{/if}}
+                    <label for="currency">
+                        Jaká je měna?<br>
+                        <input id="currency" name="currency" required="required" type="text" value="{{#if currency}}{{currency}}{{else}}Kč{{/if}}"><br>
+                    </label>
+
+                    <label for="code">
+                        Jaký je kód poukazu?<br>
+                        <input id="code" name="code" required="required" type="text" value="{{code}}"><br>
+                    </label>
+
+                    <label for="language">
+                        Jaký je jazyk?<br>
+                        <select id="language" name="language" required="required" type="text">
+                            <option {{#ifEquals language "cs"}} selected {{/ifEquals}} value="cs">Čeština ▼</option>
+                            <option {{#ifEquals language "en"}} selected {{/ifEquals}} value="en">English ▼</option>
+                            <option {{#ifEquals language "de"}} selected {{/ifEquals}} value="de">Deutsch ▼</option>
+                            <option {{#ifEquals language "pl"}} selected {{/ifEquals}} value="pl">Polski ▼</option>
+                            <option {{#ifEquals language "sk"}} selected {{/ifEquals}} value="sk">Slovenčina ▼</option>
+                            <option {{#ifEquals language "ua"}} selected {{/ifEquals}} value="ua">Українська ▼</option>
+                        </select>
+                        <br>
+                    </label>
+
+                    {{#if url}}
+                        <a href="{{url}}" download="voucher.pdf" target="_blank">Stáhnout PDF</a>
+                    {{else}}
+                    <button type="submit">Vygenerovat PDF</button>
+                    {{/if}}
+                </form>
+            </div>
+            <div style="background-color: #D0FFF1;  flex: 1">
+                {{#if url}}
+                    <embed src="{{url}}" width="100%" height="100%" frameBorder="100px"/>
+                {{/if}}
+            </div>
+        </div>
 
         <div class="color-form">
 
-          <!-- Our default paragraph/message -->
-          {{#unless colorError}}
-            {{#unless color}}
-
-            <!-- There are fancier ways to do this,
-                 but nesting two "#unless" statements sets up an
-                 "if these are both missing..." condition -->
-            <p>
-              Learn about communication with a server by talking about color.
-            </p>
-            {{/unless}}
-          {{/unless}}
-
-          <!-- The "What's your favorite color?" form sends a POST request to the server
-               Check server.js to see how it works -->
-          <form class="color-search" method="post">
-              <label for="color">
-
-                <!-- We use the handlebars "#if" statement so the form can adapt to its situation -->
-                {{#if color}}
-                  Try another color?<br>
-                {{else}}
-                  What's your favorite color?<br>
-                {{/if}}
-                <input id="color" name="color" required="required" type="text">
-              </label>
-
-            <!-- If the user submits a value through the form
-                 it'll be passed to the server in the request body  -->
-            <button type="submit">Submit</button>
-          </form>
-
-          <!-- This randomize link communicates with the server (server.js)
-               using a querystring and GET request instead of a form POST -->
-          Can't decide? <a href="?randomize=go">Use a random color!</a>
         </div>
+
 
         <div class="illo-container">
-          <img src="https://cdn.glitch.com/c62efef6-1e75-45cf-b248-afeccdda9477%2Fillustration.svg?v=1618196069568" class="illustration" alt="Node logo" />
+            <img src="https://www.gravatar.com/avatar/0074e9c5f7659c86e447cabe518dc0d3" class="illustration" alt="Node logo" style="border-radius: 10em"/>
         </div>
 
-        <!-- Instructions on using this project -->
         <div class="instructions">
-          <h2>
-            Using this project
-          </h2>
-          <p>
-            This is the Glitch <strong>Hello Node</strong> project. You can
-            use it to build your own app. Check out README.md in the editor for
-            more info and next steps you can take!
-          </p>
+            <h2>
+                Using this project
+            </h2>
+            <p>
+                This is the Glitch <strong>Hello Node</strong> project. You can
+                use it to build your own app. Check out README.md in the editor for
+                more info and next steps you can take!
+            </p>
         </div>
 
-      </div>
     </div>
-    <!-- The footer holds our remix button — you can use it for structure or cut it out ✂ -->
-    <footer class="footer">
-      <div class="links"></div>
-      <a
-        class="btn--remix"
-        target="_top"
-        href="https://glitch.com/edit/#!/remix/glitch-hello-node"
-      >
+</div>
+<!-- The footer holds our remix button — you can use it for structure or cut it out ✂ -->
+<footer class="footer">
+    <div class="links"></div>
+    <a
+            class="btn--remix"
+            target="_top"
+            href="https://glitch.com/edit/#!/remix/glitch-hello-node"
+    >
         <img
-          src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
-          alt=""
+                src="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2FLogo_Color.svg?v=1618199565140"
+                alt=""
         />
         Remix on Glitch
-      </a>
-    </footer>
-  </body>
+    </a>
+</footer>
+</body>
 </html>

@@ -152,12 +152,12 @@ p {
     margin-left: 5px;
 }
 .color-search {
-    margin-top: 3rem;
+    margin-bottom: 5rem;
 }
 .color-form {
     width: 90%;
-    max-width: 500px;
-    margin-left: 5px;
+    max-width: 270px;
+
 }
 .color-form a:not(.btn--remix) {
     font-weight: bold;
@@ -167,23 +167,49 @@ p {
 .color-form button {
     margin-top: 8px;
 }
-.color-form button:hover {
-    cursor: pointer;
-    box-shadow: -8px 4px 20px #9BE7D8;
-}
+
+
 form {
     margin: 0.75rem 0;
 }
 button,
-input {
+select,
+input,
+a{
     font-family: inherit;
+    font-weight: bolder;
     font-size: 100%;
     background: #FFFFFF;
-    border: 1px solid #000000;
+    border: 2px solid #000000;
     box-sizing: border-box;
     border-radius: 4px;
     padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    display:inline-block;
+    box-shadow: 4px 4px 0 0 #000;
+    -webkit-appearance: none; appearance: none;
 }
+input:focus{
+    outline: none;
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 #000;
+}
+select:hover {
+    cursor: pointer;
+}
+
+button{
+    cursor: pointer;
+    background-color: #00ffac;
+}
+a {
+    background-color: #f08200;
+}
+button:active, a:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 #000;
+}
+
 label {
     color: #000000;
     font-weight: bold;
