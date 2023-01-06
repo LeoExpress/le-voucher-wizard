@@ -41,7 +41,7 @@
                 <form class="color-search" method="post">
                     <label for="amount">
                         Jaká je částka na poukazu?<br>
-                        <input id="amount" name="amount" required="required" type="text" value="{{#if amount}}{{amount}}{{else}}1000{{/if}}"><br>
+                        <input id="amount" name="amount" required="required" type="text" value="{{#if amount}}{{amount}}{{else}}1000{{/if}}" onkeyup="this.value=this.value.replace(/[^\d]/,'')"><br>
                     </label>
 
                     <label for="code">
