@@ -41,6 +41,79 @@ if (seo.url === "glitch-default") {
 
 
 
+fastify.get("/voucherPreview", async function (request, reply) {
+
+    const params = request.query;
+    const { language = 'cs', amount = '1000', code = '000000000000' } = params;
+    const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
+
+
+    console.log('Creating PDF')
+    const pdfDoc = await pdflib.PDFDocument.create()
+    pdfDoc.registerFontkit(fontkit)
+    const helveticaFont = await pdfDoc.embedFont(pdflib.StandardFonts.HelveticaBold)
+    const timesRomanFont = await pdfDoc.embedFont(pdflib.StandardFonts.TimesRoman)
+    const fontBytes = await fetch('https://cdn.glitch.global/928c0fcf-427b-4ef0-abe1-990d4bf24c1d/SanomatSans-Medium.otf?v=1672753420890').then(res => res.arrayBuffer())
+    const customFont = await pdfDoc.embedFont(fontBytes)
+
+    const page = pdfDoc.addPage()
+    page.setSize(2598,1299)
+    const { width, height } = page.getSize()
+    const fontSize = 30
+
+
+    console.log('Drawing image')
+    const backgroundUrl = `${seo.url}/${language}_voucher.png`
+    const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
+    const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
+    const backgroundDims = backgroundImage.scale(0.5)
+    page.drawImage(backgroundImage, {
+        x: 0,
+        y: 0,
+        width: backgroundImage.width,
+        height: backgroundImage.height,
+    })
+
+    /*console.log('Drawing egg image')
+    const humptyImageBytes = await fetch("https://static.wikia.nocookie.net/shrek/images/5/56/Humpty_Dumpty.png/revision/latest?cb=20111130083330").then((res) => res.arrayBuffer())
+    const humptyImage = await pdfDoc.embedPng(humptyImageBytes)
+    const humptyDims = humptyImage.scale(0.5)
+    page.drawImage(humptyImage, {
+        x: 2500,
+        y: 0,
+        width: 68,
+        height: 100,
+    })*/
+
+    console.log('Drawing text')
+    page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
+        x: 115,
+        y: 445,
+        size: 165,
+        font: customFont,
+        color: pdflib.rgb(205/255, 135/255, 47/255),
+    })
+
+    console.log('Drawing text')
+    page.drawText(`${code}`, {
+        x: 2477,
+        y: 350,
+        size: 90,
+        font: timesRomanFont,
+        rotate: pdflib.degrees(90),
+    })
+
+    console.log('Saving PDF')
+    const pdfBytes = await pdfDoc.save()
+    const buf = Buffer.from(pdfBytes.buffer);
+    reply
+        .type('application/zip')
+        .send(buf)
+
+
+
+})
+
 fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
@@ -163,7 +236,8 @@ fastify.post("/", function (request, reply) {
 
     const { amount, currency, code, language } = request.body;
     const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}`;
-    viewParams = {amount, currency, code, language, url, ...viewParams};
+    const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}`;
+    viewParams = {amount, currency, code, language, url, urlPreview, ...viewParams};
 
     console.log(viewParams)
     // The Handlebars template will use the parameter values to update the page with the chosen color
