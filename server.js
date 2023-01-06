@@ -107,7 +107,7 @@ fastify.get("/voucherPreview", async function (request, reply) {
     const pdfBytes = await pdfDoc.save()
     const buf = Buffer.from(pdfBytes.buffer);
     reply
-        .type('application/zip')
+        .type('application/pdf')
         .send(buf)
 
 
