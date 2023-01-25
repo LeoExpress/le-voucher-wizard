@@ -353,16 +353,6 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     })
 
 
-    const backPage = pdfDoc.addPage()
-    backPage.setSize(313.47,214.26)
-
-
-    console.log('Drawing image')
-    const backImageBytes = await fs.readFileSync('./public/le_vizitka_zadni_app.pdf')
-    const [backImage] = await pdfDoc.embedPdf(backImageBytes)
-    backPage.drawPage(backImage)
-
-
 
 
     console.log('Saving PDF')
