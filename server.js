@@ -257,7 +257,7 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     const {
         name = 'Leona Měšťánková',
         job = 'business development analyst',
-        job2 = '',
+        job2 = ' ',
         phone = '+420 702 141 034',
         email = 'leona.mestankova@le.cz',
         web = 'leoexpress.com',
@@ -318,6 +318,7 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     };
 
     page.drawText(`${phone}`, { x: 46, y: 61.8, ...smallTextArgs })
+    console.log('phone', phone)
     page.drawText(`${email}`, { x: 46, y: 51.8, ...smallTextArgs })
 
     if(address === 'praha') {
@@ -397,8 +398,10 @@ fastify.post("/vizitky", function (request, reply) {
     let viewParams = { seo: seo };
 
     const { name, job, job2,  phone,  email,  web,  address, back } = request.body;
-    const urlPreview = `${seo.url}/vizitkyPreview?name=${name}&job=${job}&phone=${phone}&email=${email}&web=${web}&address=${address}&job2=${job2}&back=${back}`;
-    viewParams = {name, job, job2, phone,  email,  web,  address, back, url: urlPreview, urlPreview, ...viewParams};
+    //const urlPreview = `${seo.url}/vizitkyPreview?name=${name}&job=${job}&phone=${phone}&email=${email}&web=${web}&address=${address}&job2=${job2}&back=${back}`;
+    const urlPreview = `${seo.url}/vizitkyPreview?name=${encodeURIComponent(name)}&job=${encodeURIComponent(job)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&web=${web}&address=${address}&job2=${encodeURIComponent(job2)}&back=${back}`;
+    const urlBack = `${seo.url}/le_vizitka_zadni_app.pdf`;
+    viewParams = {name, job, job2, phone,  email,  web,  address, back, url: urlPreview, urlPreview, urlBack, ...viewParams};
 
     console.log(viewParams)
     // The Handlebars template will use the parameter values to update the page with the chosen color

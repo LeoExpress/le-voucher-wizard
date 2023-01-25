@@ -41,22 +41,22 @@
                 <form class="color-search" method="post">
                     <label for="name">
                         Jméno a příjmení<br>
-                        <input id="name" name="name" required="required" type="text" value="{{name}}"><br>
+                        <input id="name" name="name" required="required" placeholder="Lea Veselá" type="text" value="{{name}}"><br>
                     </label>
 
                     <label for="job">
                         Pracovní pozice<br>
-                        <input id="job" name="job" required="required" type="text" value="{{job}}"><br>
-                        <input id="job2" name="job2" required="required" type="text" value="{{job2}}"><br>
+                        <input id="job" name="job" required="required" placeholder="IT Support Level 2"  type="text" value="{{job}}"><br>
+                        <input id="job2" name="job2" type="text" value="{{job2}}"><br>
                     </label>
 
                     <label for="phone">
                         Telefon<br>
-                        <input id="phone" name="phone" required="required" type="text" value="{{phone}}"><br>
+                        <input id="phone" name="phone" required="required" placeholder="+420 700 200 3OO" type="text" value="{{phone}}"><br>
                     </label>
                     <label for="email">
                         E-mail<br>
-                        <input id="email" name="email" required="required" type="text" value="{{email}}"><br>
+                        <input id="email" name="email" required="required" placeholder="lea.vesela@le.cz" type="text" value="{{email}}"><br>
                     </label>
 
                     <label for="web">
@@ -89,7 +89,8 @@
 
 
                     <button type="submit">Vygenerovat PDF</button>
-                    <a href="{{url}}" download="voucher.pdf" target="_blank" style="opacity: {{#if url}} 1 {{else}} 0 {{/if}}">Stáhnout PDF</a>
+                    <a href="{{url}}" download="vizitka.pdf" target="_blank" style="opacity: {{#if url}} 1 {{else}} 0 {{/if}}">Stáhnout PDF</a>
+                    <a href="{{urlBack}}" download="vizitka_zadni.pdf" target="_blank" style="opacity: {{#if url}} 1 {{else}} 0 {{/if}}">Stáhnout zadní stranu PDF</a>
 
                 </form>
             </div>
