@@ -4,6 +4,7 @@ const pdflib = require("pdf-lib");
 const fontkit = require("@pdf-lib/fontkit")
 const Handlebars = require("handlebars");
 const JSZip = require("jszip");
+const fs = require("fs");
 
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
@@ -243,6 +244,146 @@ fastify.post("/", function (request, reply) {
     // The Handlebars template will use the parameter values to update the page with the chosen color
     return reply.view("/src/pages/index.hbs", viewParams);
 });
+
+
+
+
+
+
+
+fastify.get("/vizitkyPreview", async function (request, reply) {
+
+    const params = request.query;
+    const {
+        name = 'Leona Měšťánková',
+        job = 'business development analyst',
+        phone = '+420 702 141 034',
+        email = 'leona.mestankova@le.cz',
+        web = 'leoexpress.com',
+        address = 'orlicko',
+
+    } = params;
+
+
+    console.log('Creating PDF')
+    const pdfDoc = await pdflib.PDFDocument.create()
+    pdfDoc.registerFontkit(fontkit)
+    const mediumFont = await pdfDoc.embedFont(await fs.readFileSync('./public/font/SanomatSans-Medium.otf'))
+    const regularFont = await pdfDoc.embedFont(await fs.readFileSync('./public/font/SanomatSans-Regular.otf'))
+
+    const page = pdfDoc.addPage()
+    page.setSize(313,214)
+
+
+    console.log('Drawing image')
+    const backgroundImageBytes = await fs.readFileSync('./public/le_vizitka.pdf')
+    const [backgroundImage] = await pdfDoc.embedPdf(backgroundImageBytes)
+    page.drawPage(backgroundImage)
+
+    console.log('Drawing text')
+    page.drawText(`${name}`, {
+        x: 46,
+        y: 99.7,
+        size: 11,
+        font: mediumFont,
+        color: pdflib.cmyk(0, 0, 0, 1),
+    })
+
+    page.drawText(`${job}`, {
+        x: 46,
+        y: 88.8,
+        size: 7,
+        font: regularFont,
+        lineHeight: 9,
+        color: pdflib.cmyk(0, 0.6, 1, 0),
+    })
+
+
+    const smallTextArgs = {
+        size: 6.7,
+        font: regularFont,
+        lineHeight: 9,
+        color: pdflib.cmyk(0, 0,0, 1),
+    };
+
+    page.drawText(`${phone}`, { x: 46, y: 61.8, ...smallTextArgs })
+    page.drawText(`${email}`, { x: 46, y: 51.8, ...smallTextArgs })
+
+    if(address === 'praha') {
+        page.drawText(`Řehořova 908/4`, { x: 220, y: 71.8, ...smallTextArgs })
+        page.drawText(`130 00 Praha 3`, { x: 225, y: 61.8, ...smallTextArgs })
+        page.drawText(`Česká republika`, { x: 221, y: 51.8, ...smallTextArgs })
+    }
+    if(address === 'bohumin') {
+        page.drawText(`Ad. Mickiewicze`, { x: 221, y: 71.8, ...smallTextArgs })
+        page.drawText(`735 81 Bohumín`, { x: 223, y: 61.8, ...smallTextArgs })
+        page.drawText(`Česká republika`, { x: 221, y: 51.8, ...smallTextArgs })
+    }
+    if(address === 'orlicko') {
+        page.drawText(`Nádraží 395`, { x: 233, y: 71.8, ...smallTextArgs })
+        page.drawText(`561 69 Králíky`, { x: 228, y: 61.8, ...smallTextArgs })
+        page.drawText(`Česká republika`, { x: 221, y: 51.8, ...smallTextArgs })
+
+        page.drawText(`Leo Express Tenders s. r. o.`, { x: 46, y: 41.8, ...smallTextArgs })
+    }
+    if(address === 'plzen') {
+        page.drawText(`Kaltovská tř. 5/7`, { x: 220, y: 71.8, ...smallTextArgs })
+        page.drawText(`301 00 Plzeň`, { x: 231, y: 61.8, ...smallTextArgs })
+        page.drawText(`Česká republika`, { x: 221, y: 51.8, ...smallTextArgs })
+    }
+
+    page.drawText(`${web}`, {
+        x: (web === 'le.cz') ? 246: 192.5,
+        y: 145.5,
+        size: 10.5,
+        font: mediumFont,
+        color: pdflib.cmyk(0, 0.6, 1, 0),
+    })
+
+
+
+
+    console.log('Saving PDF')
+    const pdfBytes = await pdfDoc.save()
+    const buf = Buffer.from(pdfBytes.buffer);
+    reply
+        .type('application/pdf')
+        .send(buf)
+
+
+})
+
+/**
+ * Our home page route
+ *
+ * Returns src/pages/index.hbs with data built into it
+ */
+fastify.get("/vizitky", function (request, reply) {
+    // params is an object we'll pass to our handlebars template
+    let params = { seo: seo };
+
+    // The Handlebars code will be able to access the parameter values and build them into the page
+    return reply.view("/src/pages/vizitky.hbs", params);
+});
+
+/**
+ * Our POST route to handle and react to form submissions
+ *
+ * Accepts body data indicating the user choice
+ */
+fastify.post("/vizitky", function (request, reply) {
+    // Build the params object to pass to the template
+    let viewParams = { seo: seo };
+
+    const { name, job,  phone,  email,  web,  address } = request.body;
+    const urlPreview = `${seo.url}/vizitkyPreview?name=${name}&job=${job}&phone=${phone}&email=${email}&web=${web}&address=${address}`;
+    viewParams = {name, job,  phone,  email,  web,  address, url: urlPreview, urlPreview, ...viewParams};
+
+    console.log(viewParams)
+    // The Handlebars template will use the parameter values to update the page with the chosen color
+    return reply.view("/src/pages/vizitky.hbs", viewParams);
+});
+
 
 // Run the server and report out to the logs
 fastify.listen(

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--
+      This is the main Handlebars template for the site
+      - When the user visits the homepage or submits a color the app calls the endpoints in server.js
+      - The server script passes data in here and the Handlebars code builds it into the HTML page
+    -->
+
+    <meta charset="utf-8"/>
+    <link rel="icon" href="https://www.leoexpress.com/static/favicon.ico?v=2"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>{{seo.title}}</title>
+
+    <!-- Meta tags for SEO and social sharing -->
+    <link rel="canonical" href="{{seo.url}}">
+    <meta name="description" content="{{seo.description}}">
+    <meta property="og:title" content="{{seo.title}}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{seo.url}}">
+    <meta property="og:description" content="{{seo.description}}">
+    <meta property="og:image" content="{{seo.image}}">
+    <meta name="twitter:card" content="summary">
+
+    <!-- Import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css"/>
+
+</head>
+<body>
+<div class="wrapper">
+    <div class="content" role="main">
+
+        <!-- This is the start of content for our page -->
+        <h1 class="title">&nbsp;</h1>
+
+
+        <div style="display: flex">
+            <div class="color-form">
+                <form class="color-search" method="post">
+                    <label for="name">
+                        Jméno a příjmení<br>
+                        <input id="name" name="name" required="required" type="text" value="{{name}}"><br>
+                    </label>
+
+                    <label for="job">
+                        Pracovní pozice<br>
+                        <input id="job" name="job" required="required" type="text" value="{{job}}"><br>
+                    </label>
+
+                    <label for="phone">
+                        Telefon<br>
+                        <input id="phone" name="phone" required="required" type="text" value="{{phone}}"><br>
+                    </label>
+                    <label for="email">
+                        E-mail<br>
+                        <input id="email" name="email" required="required" type="text" value="{{email}}"><br>
+                    </label>
+
+                    <label for="web">
+                        URL<br>
+                        <select id="web" name="web" required="required" type="text">
+                            <option {{#ifEquals language "le.cz"}} selected {{/ifEquals}} value="le.cz">le.cz ▼</option>
+                            <option {{#ifEquals language "leoexpress.com"}} selected {{/ifEquals}} value="leoexpress.com">leoexpress.com ▼</option>
+                        </select>
+                        <br>
+                    </label>
+
+                    <label for="address">
+                        Adresa<br>
+                        <select id="address" name="address" required="required" type="text">
+                            <option {{#ifEquals language "praha"}} selected {{/ifEquals}} value="praha">Praha ▼</option>
+                            <option {{#ifEquals language "bohumin"}} selected {{/ifEquals}} value="bohumin">Bohumín ▼</option>
+                            <option {{#ifEquals language "orlicko"}} selected {{/ifEquals}} value="orlicko">Orlicko ▼</option>
+                            <option {{#ifEquals language "plzen"}} selected {{/ifEquals}} value="plzen">Plzeň ▼</option>
+                        </select>
+                        <br>
+                    </label>
+
+
+                    <button type="submit">Vygenerovat PDF</button>
+                    <a href="{{url}}" download="voucher.pdf" target="_blank" style="opacity: {{#if url}} 1 {{else}} 0 {{/if}}">Stáhnout PDF</a>
+
+                </form>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column-reverse; align-items: center; justify-content: center;align-content: center; border: 2px solid #000000; border-radius: 4px;">
+                {{#if url}}
+                    <h1 style="position: absolute">Chystám náhled...</h1>
+                    <embed src="{{urlPreview}}" width="100%" height="100%" frameBorder="100px" style="z-index: 1234"/>
+                {{else}}
+                    <img src="/logo_brutal.png" height="256px" alt="humpty"/>
+                {{/if}}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div style="position:absolute; right: 20px; bottom: 0; ">
+    <img src="https://static.wikia.nocookie.net/shrek/images/5/56/Humpty_Dumpty.png" width="40px" alt="humpty"/>
+</div>
+</body>
+</html>
