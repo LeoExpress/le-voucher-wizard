@@ -47,6 +47,7 @@
                     <label for="job">
                         Pracovní pozice<br>
                         <input id="job" name="job" required="required" type="text" value="{{job}}"><br>
+                        <input id="job2" name="job2" required="required" type="text" value="{{job2}}"><br>
                     </label>
 
                     <label for="phone">
@@ -61,8 +62,8 @@
                     <label for="web">
                         URL<br>
                         <select id="web" name="web" required="required" type="text">
-                            <option {{#ifEquals language "le.cz"}} selected {{/ifEquals}} value="le.cz">le.cz ▼</option>
-                            <option {{#ifEquals language "leoexpress.com"}} selected {{/ifEquals}} value="leoexpress.com">leoexpress.com ▼</option>
+                            <option {{#ifEquals web "le.cz"}} selected {{/ifEquals}} value="le.cz">le.cz ▼</option>
+                            <option {{#ifEquals web "leoexpress.com"}} selected {{/ifEquals}} value="leoexpress.com">leoexpress.com ▼</option>
                         </select>
                         <br>
                     </label>
@@ -70,10 +71,18 @@
                     <label for="address">
                         Adresa<br>
                         <select id="address" name="address" required="required" type="text">
-                            <option {{#ifEquals language "praha"}} selected {{/ifEquals}} value="praha">Praha ▼</option>
-                            <option {{#ifEquals language "bohumin"}} selected {{/ifEquals}} value="bohumin">Bohumín ▼</option>
-                            <option {{#ifEquals language "orlicko"}} selected {{/ifEquals}} value="orlicko">Orlicko ▼</option>
-                            <option {{#ifEquals language "plzen"}} selected {{/ifEquals}} value="plzen">Plzeň ▼</option>
+                            <option {{#ifEquals address "praha"}} selected {{/ifEquals}} value="praha">Praha ▼</option>
+                            <option {{#ifEquals address "bohumin"}} selected {{/ifEquals}} value="bohumin">Bohumín ▼</option>
+                            <option {{#ifEquals address "orlicko"}} selected {{/ifEquals}} value="orlicko">Orlicko ▼</option>
+                            <option {{#ifEquals address "plzen"}} selected {{/ifEquals}} value="plzen">Plzeň ▼</option>
+                        </select>
+                        <br>
+                    </label>
+
+                    <label for="back">
+                        Zadní strana<br>
+                        <select id="back" name="back" required="required" type="text">
+                            <option {{#ifEquals back "app"}} selected {{/ifEquals}} value="praha">APP ▼</option>
                         </select>
                         <br>
                     </label>

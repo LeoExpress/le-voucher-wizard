@@ -257,10 +257,12 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     const {
         name = 'Leona Měšťánková',
         job = 'business development analyst',
+        job2 = '',
         phone = '+420 702 141 034',
         email = 'leona.mestankova@le.cz',
         web = 'leoexpress.com',
         address = 'orlicko',
+        back = 'app'
 
     } = params;
 
@@ -272,7 +274,7 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     const regularFont = await pdfDoc.embedFont(await fs.readFileSync('./public/font/SanomatSans-Regular.otf'))
 
     const page = pdfDoc.addPage()
-    page.setSize(313,214)
+    page.setSize(313.47,214.26)
 
 
     console.log('Drawing image')
@@ -292,6 +294,15 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     page.drawText(`${job}`, {
         x: 46,
         y: 88.8,
+        size: 7,
+        font: regularFont,
+        lineHeight: 9,
+        color: pdflib.cmyk(0, 0.6, 1, 0),
+    })
+
+    page.drawText(`${job2}`, {
+        x: 46,
+        y: 78.8,
         size: 7,
         font: regularFont,
         lineHeight: 9,
@@ -341,6 +352,16 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     })
 
 
+    const backPage = pdfDoc.addPage()
+    backPage.setSize(313.47,214.26)
+
+
+    console.log('Drawing image')
+    const backImageBytes = await fs.readFileSync('./public/le_vizitka_zadni_app.pdf')
+    const [backImage] = await pdfDoc.embedPdf(backImageBytes)
+    backPage.drawPage(backImage)
+
+
 
 
     console.log('Saving PDF')
@@ -375,9 +396,9 @@ fastify.post("/vizitky", function (request, reply) {
     // Build the params object to pass to the template
     let viewParams = { seo: seo };
 
-    const { name, job,  phone,  email,  web,  address } = request.body;
-    const urlPreview = `${seo.url}/vizitkyPreview?name=${name}&job=${job}&phone=${phone}&email=${email}&web=${web}&address=${address}`;
-    viewParams = {name, job,  phone,  email,  web,  address, url: urlPreview, urlPreview, ...viewParams};
+    const { name, job, job2,  phone,  email,  web,  address, back } = request.body;
+    const urlPreview = `${seo.url}/vizitkyPreview?name=${name}&job=${job}&phone=${phone}&email=${email}&web=${web}&address=${address}&job2=${job2}&back=${back}`;
+    viewParams = {name, job, job2, phone,  email,  web,  address, back, url: urlPreview, urlPreview, ...viewParams};
 
     console.log(viewParams)
     // The Handlebars template will use the parameter values to update the page with the chosen color
