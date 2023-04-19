@@ -345,7 +345,7 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
     }
     if(address === 'slovensko') {
         page.drawText(`Pražská 11`, { x: 239, y: 71.8, ...smallTextArgs })
-        page.drawText(`811 04  Bratislava`, { x: 219, y: 61.8, ...smallTextArgs })
+        page.drawText(`811 04 Bratislava`, { x: 220.5, y: 61.8, ...smallTextArgs })
         page.drawText(`Slovensko`, { x: 237.8, y: 51.8, ...smallTextArgs })
     }
 
