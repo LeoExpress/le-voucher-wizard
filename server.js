@@ -343,6 +343,11 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
         page.drawText(`301 00 Plzeň`, { x: 231, y: 61.8, ...smallTextArgs })
         page.drawText(`Česká republika`, { x: 221, y: 51.8, ...smallTextArgs })
     }
+    if(address === 'slovensko') {
+        page.drawText(`Pražská 11`, { x: 239, y: 71.8, ...smallTextArgs })
+        page.drawText(`811 04  Bratislava`, { x: 219, y: 61.8, ...smallTextArgs })
+        page.drawText(`Slovensko`, { x: 237.8, y: 51.8, ...smallTextArgs })
+    }
 
     page.drawText(`${web}`, {
         x: (web === 'le.cz') ? 246: 192.5,
@@ -390,7 +395,18 @@ fastify.post("/vizitky", function (request, reply) {
     const { name, job, job2,  phone,  email,  web,  address, back } = request.body;
     //const urlPreview = `${seo.url}/vizitkyPreview?name=${name}&job=${job}&phone=${phone}&email=${email}&web=${web}&address=${address}&job2=${job2}&back=${back}`;
     const urlPreview = `${seo.url}/vizitkyPreview?name=${encodeURIComponent(name)}&job=${encodeURIComponent(job)}&phone=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&web=${web}&address=${address}&job2=${encodeURIComponent(job2)}&back=${back}`;
-    const urlBack = `${seo.url}/le_vizitka_zadni_app.pdf`;
+    var urlBack = `${seo.url}/zadni_corporate.pdf`;
+    if (back === 'plot') {
+        urlBack = `${seo.url}/zadni_plot.pdf`;
+    }
+    if (back === 'corporate') {
+        const urlBack = `${seo.url}/zadni_corporate.pdf`;
+    }
+    if (back === 'app') {
+        const urlBack = `${seo.url}/zadni_app.pdf`;
+    }
+
+
     viewParams = {name, job, job2, phone,  email,  web,  address, back, url: urlPreview, urlPreview, urlBack, ...viewParams};
 
     console.log(viewParams)

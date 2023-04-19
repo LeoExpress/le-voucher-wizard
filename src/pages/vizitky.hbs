@@ -64,6 +64,7 @@
                         <select id="web" name="web" required="required" type="text">
                             <option {{#ifEquals web "le.cz"}} selected {{/ifEquals}} value="le.cz">le.cz ▼</option>
                             <option {{#ifEquals web "leoexpress.com"}} selected {{/ifEquals}} value="leoexpress.com">leoexpress.com ▼</option>
+                            <option {{#ifEquals web "leoexpress.sk"}} selected {{/ifEquals}} value="leoexpress.sk">leoexpress.sk ▼</option>
                         </select>
                         <br>
                     </label>
@@ -75,6 +76,7 @@
                             <option {{#ifEquals address "bohumin"}} selected {{/ifEquals}} value="bohumin">Bohumín ▼</option>
                             <option {{#ifEquals address "orlicko"}} selected {{/ifEquals}} value="orlicko">Orlicko ▼</option>
                             <option {{#ifEquals address "plzen"}} selected {{/ifEquals}} value="plzen">Plzeň ▼</option>
+                            <option {{#ifEquals address "slovensko"}} selected {{/ifEquals}} value="slovensko">Slovensko ▼</option>
                         </select>
                         <br>
                     </label>
@@ -82,7 +84,9 @@
                     <label for="back">
                         Zadní strana<br>
                         <select id="back" name="back" required="required" type="text">
-                            <option {{#ifEquals back "app"}} selected {{/ifEquals}} value="praha">APP ▼</option>
+                            <option {{#ifEquals back "corporate"}} selected {{/ifEquals}} value="corporate">Corporate ▼</option>
+                            <option {{#ifEquals back "plot"}} selected {{/ifEquals}} value="plot">Offline plot ▼</option>
+                            <option {{#ifEquals back "app"}} selected {{/ifEquals}} value="app">APP ▼</option>
                         </select>
                         <br>
                     </label>
