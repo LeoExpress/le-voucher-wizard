@@ -398,12 +398,14 @@ fastify.post("/vizitky", function (request, reply) {
     var urlBack = `${seo.url}/zadni_corporate.pdf`;
     if (back === 'plot') {
         urlBack = `${seo.url}/zadni_plot.pdf`;
-    }
-    if (back === 'corporate') {
-        const urlBack = `${seo.url}/zadni_corporate.pdf`;
-    }
-    if (back === 'app') {
-        const urlBack = `${seo.url}/zadni_app.pdf`;
+    } else if (back === 'corporate') {
+        urlBack = `${seo.url}/zadni_corporate.pdf`;
+    } else if (back === 'app') {
+        urlBack = `${seo.url}/zadni_app.pdf`;
+    } else if (back === 'cestujte_cz') {
+        urlBack = `${seo.url}/zadni_cestujte_cz.pdf`;
+    } else if (back === 'cestujte_sk') {
+        urlBack = `${seo.url}/zadni_cestujte_sk.pdf`;
     }
 
 

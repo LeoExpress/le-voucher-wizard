@@ -84,9 +84,12 @@
                     <label for="back">
                         Zadní strana<br>
                         <select id="back" name="back" required="required" type="text">
-                            <option {{#ifEquals back "corporate"}} selected {{/ifEquals}} value="corporate">Corporate ▼</option>
-                            <option {{#ifEquals back "plot"}} selected {{/ifEquals}} value="plot">Offline plot ▼</option>
-                            <option {{#ifEquals back "app"}} selected {{/ifEquals}} value="app">APP ▼</option>
+                            <option {{#ifEquals back "cestujte_cz"}} selected {{/ifEquals}} value="cestujte_cz">Cestujte CZ ▼</option>
+                            <option {{#ifEquals back "cestujte_sk"}} selected {{/ifEquals}} value="cestujte_sk">Cestujte SK ▼</option>
+                            <option {{#ifEquals back "corporate"}} selected {{/ifEquals}} value="corporate">Corporate CZ ▼</option>
+                            <option {{#ifEquals back "plot"}} selected {{/ifEquals}} value="plot">Offline plot CZ ▼</option>
+                            <option {{#ifEquals back "app"}} selected {{/ifEquals}} value="app">APP CZ ▼</option>
+
                         </select>
                         <br>
                     </label>
