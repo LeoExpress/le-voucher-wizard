@@ -419,7 +419,7 @@ fastify.post("/vizitky", function (request, reply) {
 
 // Run the server and report out to the logs
 fastify.listen(
-    { port: process.env.PORT || 3000, host: '0.0.0.0' },
+    { port: process.env.PORT || 8080, host: '0.0.0.0' },
     function (err, address) {
         if (err) {
             console.error(err);
