@@ -9,4 +9,8 @@ RUN npm install --production
 
 COPY . .
 
+# port 8080 is the default port for the node server
+ENV PORT=8080
+EXPOSE 8080
+
 CMD ["node", "server.js"]
