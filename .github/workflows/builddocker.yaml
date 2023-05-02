@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - main
 jobs:
   build-docker:
     runs-on: ubuntu-latest
@@ -16,7 +15,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/LeoExpress/le-voucher-wizard
+          images: ghcr.io/leoexpress/le-voucher-wizard
           flavor: latest=true
           tags: |
             type=ref,event=branch
