@@ -11,7 +11,7 @@ Simple REST service for creating vouchers for Leo Express. It also provides a si
     language => Language of voucher [cs, sk, en, pl, de, ua]
 ####
     Example URL:
-    https://le-voucher-wizard.herokuapp.com/voucher?amount=500&code=1243123123123&language=pl
+    https://voucher-wizard.le.cz/voucher?amount=500&code=1243123123123&language=pl
 
 ### Response
     Server returns voucher single ZIP file with PDF vouchers ready to download
