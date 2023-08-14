@@ -406,6 +406,8 @@ fastify.post("/vizitky", function (request, reply) {
         urlBack = `${seo.url}/zadni_cestujte_cz.pdf`;
     } else if (back === 'cestujte_sk') {
         urlBack = `${seo.url}/zadni_cestujte_sk.pdf`;
+    } else if (back === 'inzerce') {
+        urlBack = `${seo.url}/zadni_inzerce.pdf`;
     }
 
 
