@@ -105,7 +105,7 @@ fastify.get("/voucherPreview", async function (request, reply) {
     })
 
     console.log('Saving PDF')
-    const pdfBytes = await pdfDoc.save()
+    const pdfBytes = await pdfDoc.save({useObjectStreams: false})
     const buf = Buffer.from(pdfBytes.buffer);
     reply
         .type('application/pdf')
@@ -183,7 +183,7 @@ fastify.get("/voucher", async function (request, reply) {
         })
 
         console.log('Saving PDF')
-        const pdfBytes = await pdfDoc.save()
+        const pdfBytes = await pdfDoc.save({useObjectStreams: false})
         const buf = Buffer.from(pdfBytes.buffer);
         zip.file(`voucher_${codeElement}.pdf`, buf);
     }
