@@ -45,7 +45,7 @@ if (seo.url === "glitch-default") {
 fastify.get("/voucherPreview", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', code = '000000000000' } = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000' } = params;
     const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
 
 
@@ -54,8 +54,10 @@ fastify.get("/voucherPreview", async function (request, reply) {
     pdfDoc.registerFontkit(fontkit)
     const helveticaFont = await pdfDoc.embedFont(pdflib.StandardFonts.HelveticaBold)
     const timesRomanFont = await pdfDoc.embedFont(pdflib.StandardFonts.TimesRoman)
-    const fontBytes = await fetch('https://cdn.glitch.global/928c0fcf-427b-4ef0-abe1-990d4bf24c1d/SanomatSans-Medium.otf?v=1672753420890').then(res => res.arrayBuffer())
+    const fontBytes = await fs.readFileSync('./public/font/SanomatSans-Medium.otf')
+    const fontRegularBytes = await fs.readFileSync('./public/font/SanomatSans-Regular.otf')
     const customFont = await pdfDoc.embedFont(fontBytes)
+    const regularFont = await pdfDoc.embedFont(fontRegularBytes)
 
     const page = pdfDoc.addPage()
     page.setSize(2598,1299)
@@ -64,8 +66,13 @@ fastify.get("/voucherPreview", async function (request, reply) {
 
 
     console.log('Drawing image')
-    const backgroundUrl = `${seo.url}/${language}_voucher.png`
-    const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
+    //const backgroundUrl = `${seo.url}/${language}_voucher.png`
+    //const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
+
+    // load image from filesystem
+    const backgroundImageBytes = await fs.readFileSync(`./public/${language}_voucher.png`)
+
+
     const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
     const backgroundDims = backgroundImage.scale(0.5)
     page.drawImage(backgroundImage, {
@@ -85,6 +92,102 @@ fastify.get("/voucherPreview", async function (request, reply) {
         width: 68,
         height: 100,
     })*/
+
+
+    // determine classes based on language
+    let classesArray = classes.split(',')
+
+    // allow only valid classes (eco, ecoplus, bus, pre)
+    classesArray = classesArray.filter((c) => ['eco', 'ecoplus', 'bus', 'pre'].includes(c))
+
+    // if no valid classes, default to eco
+    if (classesArray.length === 0) classesArray = ['eco']
+
+    // rename classes based on language
+    classesArray = classesArray.map((c) => {
+        switch (c) {
+            case 'eco':
+                return 'Economy';
+            case 'ecoplus':
+                return 'Economy Plus';
+            case 'bus':
+                return 'Business';
+            case 'pre':
+                return 'Premium';
+        }
+    });
+
+    // determine "or" text in languages
+    let orMap = {
+        cs: 'nebo',
+        pl: 'lub',
+        sk: 'alebo',
+        de: 'oder',
+        en: 'or',
+        ru: 'или',
+        ua: 'або'
+    }
+
+    let classesText = classesArray.map((c, i) => {
+        let text = ''
+        if (i === 0) {
+            text = c
+        } else if (i === classesArray.length - 1) {
+            text = ` ${orMap[language]} ${c}`
+        } else {
+            text = `, ${c}`
+        }
+        return text
+    }).join('')
+
+    const textSubtitleMap = {
+        cs: `Dárkový poukaz je platný pro třídu ${classesText}. Lze jej použít pro nákup jízdenek 
+opakovaně až do vyčerpání jeho hodnoty. Číslo poukazu zadejte na webu le.cz v sekci Platba. Pro zjištění zůstatku 
+se přihlaste do Vašeho Smile Club účtu a v sekci Moje leo kredity vyberte podsekci Kreditová banka, kam zadáte 
+číslo poukazu. V případě problémů kontaktujte info@le.cz.`,
+        en: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
+repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
+To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
+section to enter the voucher number. If you have any problems, please contact info@le.cz`,
+        pl: `Voucher upominkowy jest ważny w klasie ${classesText}. Może być wykorzystywany 
+do wielokrotnego zakupu biletów aż do wyczerpania jego wartości. Wprowadź numer vouchera na stronie le.cz w sekcji Płatności. 
+Aby sprawdzić saldo, zaloguj się na swoje konto Smile Club i wybierz podsekcję Bank kredytowy w sekcji Moje kredyty leo, 
+aby wprowadzić numer vouchera. W razie jakichkolwiek problemów prosimy o kontakt info@le.cz.`,
+        sk: `Darčeková poukážka platí pre ${classesText} triedu. Možno ho použiť na opakovaný nákup leteniek 
+až do vyčerpania jeho hodnoty. Číslo poukazu zadajte na webovej stránke le.cz v časti Platba. Ak chcete skontrolovať zostatok, 
+prihláste sa do svojho účtu Smile Club a v časti Moje leo kredity vyberte podsekciu Kreditná banka a zadajte číslo poukazu. 
+V prípade akýchkoľvek problémov kontaktujte info@le.cz.`,
+        de: `Der Geschenkgutschein ist für die ${classesText} Klasse gültig. Er kann wiederholt für den 
+Kauf von Fahrkarten verwendet werden, bis sein Wert erschöpft ist. Geben Sie die Gutscheinnummer auf der Website le.cz im Abschnitt Zahlung ein. 
+Um Ihr Guthaben zu überprüfen, loggen Sie sich in Ihr Smile-Club-Konto ein und wählen Sie in der Rubrik Meine leo-Gutschriften den Unterabschnitt Credit Bank, 
+um die Gutscheinnummer einzugeben. Sollten Sie Probleme haben, wenden Sie sich bitte an info@le.cz`,
+        ua: `Подарунковий ваучер дійсний для ${classesText} класу. Його можна використовувати для придбання квитків багаторазово,
+ доки не буде вичерпано його вартість. Введіть номер ваучера на сайті le.cz у розділі Оплата. Щоб перевірити баланс, увійдіть до свого облікового 
+ запису Smile Club і виберіть підрозділ Кредитний банк у розділі Мої кредити leo, щоб ввести номер ваучера. 
+ Якщо у вас виникли проблеми, будь ласка, зверніться за адресою info@le.cz.`,
+        cn: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
+repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
+To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
+section to enter the voucher number. If you have any problems, please contact info@le.cz`,
+        hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, 
+amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, 
+és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. 
+Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
+
+    }
+
+
+
+    const textSubtitle = textSubtitleMap[language]
+
+    page.drawText(textSubtitle, {
+        x: 115,
+        y: 243,
+        size: 32,
+        font: regularFont,
+        color: pdflib.rgb(87/255, 87/255, 87/255),
+        lineHeight: 40,
+    })
 
     console.log('Drawing text')
     page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
@@ -118,7 +221,7 @@ fastify.get("/voucherPreview", async function (request, reply) {
 fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', code = '000000000000' } = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000' } = params;
     const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
 
     // Create ZIP from buffer
@@ -132,8 +235,10 @@ fastify.get("/voucher", async function (request, reply) {
         pdfDoc.registerFontkit(fontkit)
         const helveticaFont = await pdfDoc.embedFont(pdflib.StandardFonts.HelveticaBold)
         const timesRomanFont = await pdfDoc.embedFont(pdflib.StandardFonts.TimesRoman)
-        const fontBytes = await fetch('https://cdn.glitch.global/928c0fcf-427b-4ef0-abe1-990d4bf24c1d/SanomatSans-Medium.otf?v=1672753420890').then(res => res.arrayBuffer())
+        const fontBytes = await fs.readFileSync('./public/font/SanomatSans-Medium.otf')
+        const fontRegularBytes = await fs.readFileSync('./public/font/SanomatSans-Regular.otf')
         const customFont = await pdfDoc.embedFont(fontBytes)
+        const regularFont = await pdfDoc.embedFont(fontRegularBytes)
 
         const page = pdfDoc.addPage()
         page.setSize(2598,1299)
@@ -163,6 +268,102 @@ fastify.get("/voucher", async function (request, reply) {
             width: 68,
             height: 100,
         })*/
+
+
+        let classesArray = classes.split(',')
+
+        // allow only valid classes (eco, ecoplus, bus, pre)
+        classesArray = classesArray.filter((c) => ['eco', 'ecoplus', 'bus', 'pre'].includes(c))
+
+        // if no valid classes, default to eco
+        if (classesArray.length === 0) classesArray = ['eco']
+
+        // rename classes based on language
+        classesArray = classesArray.map((c) => {
+            switch (c) {
+                case 'eco':
+                    return 'Economy';
+                case 'ecoplus':
+                    return 'Economy Plus';
+                case 'bus':
+                    return 'Business';
+                case 'pre':
+                    return 'Premium';
+            }
+        });
+
+        // determine "or" text in languages
+        let orMap = {
+            cs: 'nebo',
+            pl: 'lub',
+            sk: 'alebo',
+            de: 'oder',
+            en: 'or',
+            ru: 'или',
+            ua: 'або'
+        }
+
+        let classesText = classesArray.map((c, i) => {
+            let text = ''
+            if (i === 0) {
+                text = c
+            } else if (i === classesArray.length - 1) {
+                text = ` ${orMap[language]} ${c}`
+            } else {
+                text = `, ${c}`
+            }
+            return text
+        }).join('')
+
+        const textSubtitleMap = {
+            cs: `Dárkový poukaz je platný pro třídu ${classesText}. Lze jej použít pro nákup jízdenek 
+opakovaně až do vyčerpání jeho hodnoty. Číslo poukazu zadejte na webu le.cz v sekci Platba. Pro zjištění zůstatku 
+se přihlaste do Vašeho Smile Club účtu a v sekci Moje leo kredity vyberte podsekci Kreditová banka, kam zadáte 
+číslo poukazu. V případě problémů kontaktujte info@le.cz.`,
+            en: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
+repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
+To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
+section to enter the voucher number. If you have any problems, please contact info@le.cz`,
+            pl: `Voucher upominkowy jest ważny w klasie ${classesText}. Może być wykorzystywany 
+do wielokrotnego zakupu biletów aż do wyczerpania jego wartości. Wprowadź numer vouchera na stronie le.cz w sekcji Płatności. 
+Aby sprawdzić saldo, zaloguj się na swoje konto Smile Club i wybierz podsekcję Bank kredytowy w sekcji Moje kredyty leo, 
+aby wprowadzić numer vouchera. W razie jakichkolwiek problemów prosimy o kontakt info@le.cz.`,
+            sk: `Darčeková poukážka platí pre ${classesText} triedu. Možno ho použiť na opakovaný nákup leteniek 
+až do vyčerpania jeho hodnoty. Číslo poukazu zadajte na webovej stránke le.cz v časti Platba. Ak chcete skontrolovať zostatok, 
+prihláste sa do svojho účtu Smile Club a v časti Moje leo kredity vyberte podsekciu Kreditná banka a zadajte číslo poukazu. 
+V prípade akýchkoľvek problémov kontaktujte info@le.cz.`,
+            de: `Der Geschenkgutschein ist für die ${classesText} Klasse gültig. Er kann wiederholt für den 
+Kauf von Fahrkarten verwendet werden, bis sein Wert erschöpft ist. Geben Sie die Gutscheinnummer auf der Website le.cz im Abschnitt Zahlung ein. 
+Um Ihr Guthaben zu überprüfen, loggen Sie sich in Ihr Smile-Club-Konto ein und wählen Sie in der Rubrik Meine leo-Gutschriften den Unterabschnitt Credit Bank, 
+um die Gutscheinnummer einzugeben. Sollten Sie Probleme haben, wenden Sie sich bitte an info@le.cz`,
+            ua: `Подарунковий ваучер дійсний для ${classesText} класу. Його можна використовувати для придбання квитків багаторазово,
+ доки не буде вичерпано його вартість. Введіть номер ваучера на сайті le.cz у розділі Оплата. Щоб перевірити баланс, увійдіть до свого облікового 
+ запису Smile Club і виберіть підрозділ Кредитний банк у розділі Мої кредити leo, щоб ввести номер ваучера. 
+ Якщо у вас виникли проблеми, будь ласка, зверніться за адресою info@le.cz.`,
+            cn: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
+repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
+To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
+section to enter the voucher number. If you have any problems, please contact info@le.cz`,
+            hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, 
+amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, 
+és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. 
+Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
+
+        }
+
+
+
+        const textSubtitle = textSubtitleMap[language]
+
+        page.drawText(textSubtitle, {
+            x: 115,
+            y: 243,
+            size: 32,
+            font: regularFont,
+            color: pdflib.rgb(87/255, 87/255, 87/255),
+            lineHeight: 40,
+        })
+
 
         console.log('Drawing text')
         page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
@@ -235,9 +436,9 @@ fastify.post("/", function (request, reply) {
     // Build the params object to pass to the template
     let viewParams = { seo: seo };
 
-    const { amount, currency, code, language } = request.body;
-    const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}`;
-    const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}`;
+    const { amount, currency, code, language, classes } = request.body;
+    const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}&classes=${classes}`;
+    const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}&classes=${classes}`;
     viewParams = {amount, currency, code, language, url, urlPreview, ...viewParams};
 
     console.log(viewParams)

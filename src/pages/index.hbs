@@ -62,6 +62,17 @@
                         <br>
                     </label>
 
+                    <label for="classes">
+                        Jaká třída?<br>
+                        <select id="classes" name="classes" required="required" type="text">
+                            <option {{#ifEquals classes "eco"}} selected {{/ifEquals}} value="eco">ECO ▼</option>
+                            <option {{#ifEquals classes "eco,ecoplus"}} selected {{/ifEquals}} value="eco,ecoplus">ECO, ECO Plus ▼</option>
+                            <option {{#ifEquals classes "eco,ecoplus,bus"}} selected {{/ifEquals}} value="eco,ecoplus,bus">ECO, ECO Plus, BUS ▼</option>
+                            <option {{#ifEquals classes "eco,ecoplus,bus,pre"}} selected {{/ifEquals}} value="eco,ecoplus,bus,pre">Vše ▼</option>
+                        </select>
+                        <br>
+                    </label>
+
 
                     <button type="submit">Vygenerovat PDF</button>
                     <a href="{{url}}" target="_blank" style="opacity: {{#if url}} 1 {{else}} 0 {{/if}}">Stáhnout PDF</a>
