@@ -439,7 +439,7 @@ fastify.post("/", function (request, reply) {
     const { amount, currency, code, language, classes } = request.body;
     const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}&classes=${classes}`;
     const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}&classes=${classes}`;
-    viewParams = {amount, currency, code, language, url, urlPreview, ...viewParams};
+    viewParams = {amount, currency, code, language, url, urlPreview, classes, ...viewParams};
 
     console.log(viewParams)
     // The Handlebars template will use the parameter values to update the page with the chosen color
