@@ -9,9 +9,10 @@ Simple REST service for creating vouchers for Leo Express. It also provides a si
     code => Actual voucher code i.e. 1234567890 or for multiple codes use , as delimeter i.e. 11111,22222,3333
     amount => Amount of voucher
     language => Language of voucher [cs, sk, en, pl, de, ua]
+    classes => Valid shortnames for classes, separated by comma i.e. [eco,ecoplus,bus,pre] 
 ####
     Example URL:
-    https://voucher-wizard.le.cz/voucher?amount=500&code=1243123123123&language=pl
+    https://voucher-wizard.le.cz/voucher?amount=500&code=1243123123123&language=pl&classes=eco,ecoplus
 
 ### Response
     Server returns voucher single ZIP file with PDF vouchers ready to download
