@@ -41,6 +41,25 @@ if (seo.url === "glitch-default") {
 }
 
 
+const textSubtitleMap = (language, classesText) => {
+    const map = {
+        cs: `Dárkový poukaz je platný pro třídu ${classesText}. Lze jej použít pro nákup jízdenek opakovaně až do vyčerpání jeho hodnoty. Číslo poukazu zadejte na webu le.cz v sekci Platba. Pro zjištění zůstatku se přihlaste do Vašeho Smile Club účtu a v sekci Moje leo kredity vyberte podsekci Kreditová banka, kam zadáte číslo poukazu. V případě problémů kontaktujte info@le.cz.`,
+        en: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits section to enter the voucher number. If you have any problems, please contact info@le.cz`,
+        pl: `Voucher upominkowy jest ważny w klasie ${classesText}. Może być wykorzystywany do wielokrotnego zakupu biletów aż do wyczerpania jego wartości. Wprowadź numer vouchera na stronie le.cz w sekcji Płatności. Aby sprawdzić saldo, zaloguj się na swoje konto Smile Club i wybierz podsekcję Bank kredytowy w sekcji Moje kredyty leo, aby wprowadzić numer vouchera. W razie jakichkolwiek problemów prosimy o kontakt info@le.cz.`,
+        sk: `Darčeková poukážka platí pre ${classesText} triedu. Možno ho použiť na opakovaný nákup lístkov až do vyčerpania jeho hodnoty. Číslo poukazu zadajte na webovej stránke le.cz v časti Platba. Ak chcete skontrolovať zostatok, prihláste sa do svojho účtu Smile Club a v časti Moje leo kredity vyberte podsekciu Kreditná banka a zadajte číslo poukazu. V prípade akýchkoľvek problémov kontaktujte info@le.cz.`,
+        de: `Der Geschenkgutschein ist für die ${classesText} Klasse gültig. Er kann wiederholt für den Kauf von Fahrkarten verwendet werden, bis sein Wert erschöpft ist. Geben Sie die Gutscheinnummer auf der Website le.cz im Abschnitt Zahlung ein. Um Ihr Guthaben zu überprüfen, loggen Sie sich in Ihr Smile-Club-Konto ein und wählen Sie in der Rubrik Meine leo-Gutschriften den Unterabschnitt Credit Bank, um die Gutscheinnummer einzugeben. Sollten Sie Probleme haben, wenden Sie sich bitte an info@le.cz`,
+        ua: `Подарунковий ваучер дійсний для ${classesText} класу. Його можна використовувати для придбання квитків багаторазово, доки не буде вичерпано його вартість. Введіть номер ваучера на сайті le.cz у розділі Оплата. Щоб перевірити баланс, увійдіть до свого облікового  запису Smile Club і виберіть підрозділ Кредитний банк у розділі Мої кредити leo, щоб ввести номер ваучера.  Якщо у вас виникли проблеми, будь ласка, зверніться за адресою info@le.cz.`,
+        cn: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits section to enter the voucher number. If you have any problems, please contact info@le.cz`,
+        hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
+
+    }
+    return map[language]
+}
+
+
+
+
+
 
 fastify.get("/voucherPreview", async function (request, reply) {
 
@@ -53,6 +72,7 @@ fastify.get("/voucherPreview", async function (request, reply) {
     const pdfDoc = await pdflib.PDFDocument.create()
     pdfDoc.registerFontkit(fontkit)
     const helveticaFont = await pdfDoc.embedFont(pdflib.StandardFonts.HelveticaBold)
+    const arialFont = await pdfDoc.embedFont(await fs.readFileSync('./public/font/Arial.otf'))
     const timesRomanFont = await pdfDoc.embedFont(pdflib.StandardFonts.TimesRoman)
     const fontBytes = await fs.readFileSync('./public/font/SanomatSans-Medium.otf')
     const fontRegularBytes = await fs.readFileSync('./public/font/SanomatSans-Regular.otf')
@@ -140,53 +160,19 @@ fastify.get("/voucherPreview", async function (request, reply) {
         return text
     }).join('')
 
-    const textSubtitleMap = {
-        cs: `Dárkový poukaz je platný pro třídu ${classesText}. Lze jej použít pro nákup jízdenek 
-opakovaně až do vyčerpání jeho hodnoty. Číslo poukazu zadejte na webu le.cz v sekci Platba. Pro zjištění zůstatku 
-se přihlaste do Vašeho Smile Club účtu a v sekci Moje leo kredity vyberte podsekci Kreditová banka, kam zadáte 
-číslo poukazu. V případě problémů kontaktujte info@le.cz.`,
-        en: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
-repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
-To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
-section to enter the voucher number. If you have any problems, please contact info@le.cz`,
-        pl: `Voucher upominkowy jest ważny w klasie ${classesText}. Może być wykorzystywany 
-do wielokrotnego zakupu biletów aż do wyczerpania jego wartości. Wprowadź numer vouchera na stronie le.cz w sekcji Płatności. 
-Aby sprawdzić saldo, zaloguj się na swoje konto Smile Club i wybierz podsekcję Bank kredytowy w sekcji Moje kredyty leo, 
-aby wprowadzić numer vouchera. W razie jakichkolwiek problemów prosimy o kontakt info@le.cz.`,
-        sk: `Darčeková poukážka platí pre ${classesText} triedu. Možno ho použiť na opakovaný nákup leteniek 
-až do vyčerpania jeho hodnoty. Číslo poukazu zadajte na webovej stránke le.cz v časti Platba. Ak chcete skontrolovať zostatok, 
-prihláste sa do svojho účtu Smile Club a v časti Moje leo kredity vyberte podsekciu Kreditná banka a zadajte číslo poukazu. 
-V prípade akýchkoľvek problémov kontaktujte info@le.cz.`,
-        de: `Der Geschenkgutschein ist für die ${classesText} Klasse gültig. Er kann wiederholt für den 
-Kauf von Fahrkarten verwendet werden, bis sein Wert erschöpft ist. Geben Sie die Gutscheinnummer auf der Website le.cz im Abschnitt Zahlung ein. 
-Um Ihr Guthaben zu überprüfen, loggen Sie sich in Ihr Smile-Club-Konto ein und wählen Sie in der Rubrik Meine leo-Gutschriften den Unterabschnitt Credit Bank, 
-um die Gutscheinnummer einzugeben. Sollten Sie Probleme haben, wenden Sie sich bitte an info@le.cz`,
-        ua: `Подарунковий ваучер дійсний для ${classesText} класу. Його можна використовувати для придбання квитків багаторазово,
- доки не буде вичерпано його вартість. Введіть номер ваучера на сайті le.cz у розділі Оплата. Щоб перевірити баланс, увійдіть до свого облікового 
- запису Smile Club і виберіть підрозділ Кредитний банк у розділі Мої кредити leo, щоб ввести номер ваучера. 
- Якщо у вас виникли проблеми, будь ласка, зверніться за адресою info@le.cz.`,
-        cn: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
-repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
-To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
-section to enter the voucher number. If you have any problems, please contact info@le.cz`,
-        hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, 
-amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, 
-és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. 
-Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
-
-    }
 
 
 
-    const textSubtitle = textSubtitleMap[language]
+    const textSubtitle = textSubtitleMap(language, classesText)
 
     page.drawText(textSubtitle, {
         x: 115,
         y: 243,
         size: 32,
-        font: regularFont,
+        font: language !== 'ua' ? regularFont : arialFont,
         color: pdflib.rgb(87/255, 87/255, 87/255),
         lineHeight: 40,
+        maxWidth: 1750
     })
 
     console.log('Drawing text')
@@ -314,42 +300,6 @@ fastify.get("/voucher", async function (request, reply) {
             }
             return text
         }).join('')
-
-        const textSubtitleMap = {
-            cs: `Dárkový poukaz je platný pro třídu ${classesText}. Lze jej použít pro nákup jízdenek 
-opakovaně až do vyčerpání jeho hodnoty. Číslo poukazu zadejte na webu le.cz v sekci Platba. Pro zjištění zůstatku 
-se přihlaste do Vašeho Smile Club účtu a v sekci Moje leo kredity vyberte podsekci Kreditová banka, kam zadáte 
-číslo poukazu. V případě problémů kontaktujte info@le.cz.`,
-            en: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
-repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
-To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
-section to enter the voucher number. If you have any problems, please contact info@le.cz`,
-            pl: `Voucher upominkowy jest ważny w klasie ${classesText}. Może być wykorzystywany 
-do wielokrotnego zakupu biletów aż do wyczerpania jego wartości. Wprowadź numer vouchera na stronie le.cz w sekcji Płatności. 
-Aby sprawdzić saldo, zaloguj się na swoje konto Smile Club i wybierz podsekcję Bank kredytowy w sekcji Moje kredyty leo, 
-aby wprowadzić numer vouchera. W razie jakichkolwiek problemów prosimy o kontakt info@le.cz.`,
-            sk: `Darčeková poukážka platí pre ${classesText} triedu. Možno ho použiť na opakovaný nákup leteniek 
-až do vyčerpania jeho hodnoty. Číslo poukazu zadajte na webovej stránke le.cz v časti Platba. Ak chcete skontrolovať zostatok, 
-prihláste sa do svojho účtu Smile Club a v časti Moje leo kredity vyberte podsekciu Kreditná banka a zadajte číslo poukazu. 
-V prípade akýchkoľvek problémov kontaktujte info@le.cz.`,
-            de: `Der Geschenkgutschein ist für die ${classesText} Klasse gültig. Er kann wiederholt für den 
-Kauf von Fahrkarten verwendet werden, bis sein Wert erschöpft ist. Geben Sie die Gutscheinnummer auf der Website le.cz im Abschnitt Zahlung ein. 
-Um Ihr Guthaben zu überprüfen, loggen Sie sich in Ihr Smile-Club-Konto ein und wählen Sie in der Rubrik Meine leo-Gutschriften den Unterabschnitt Credit Bank, 
-um die Gutscheinnummer einzugeben. Sollten Sie Probleme haben, wenden Sie sich bitte an info@le.cz`,
-            ua: `Подарунковий ваучер дійсний для ${classesText} класу. Його можна використовувати для придбання квитків багаторазово,
- доки не буде вичерпано його вартість. Введіть номер ваучера на сайті le.cz у розділі Оплата. Щоб перевірити баланс, увійдіть до свого облікового 
- запису Smile Club і виберіть підрозділ Кредитний банк у розділі Мої кредити leo, щоб ввести номер ваучера. 
- Якщо у вас виникли проблеми, будь ласка, зверніться за адресою info@le.cz.`,
-            cn: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets 
-repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. 
-To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits 
-section to enter the voucher number. If you have any problems, please contact info@le.cz`,
-            hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, 
-amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, 
-és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. 
-Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
-
-        }
 
 
 
