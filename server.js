@@ -57,14 +57,7 @@ const textSubtitleMap = (language, classesText) => {
 }
 
 
-
-
-
-
-fastify.get("/voucherPreview", async function (request, reply) {
-
-    const params = request.query;
-    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000' } = params;
+const createPDF = async (language, amount, classes, code) => {
     const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
 
 
@@ -196,9 +189,22 @@ fastify.get("/voucherPreview", async function (request, reply) {
     console.log('Saving PDF')
     const pdfBytes = await pdfDoc.save({useObjectStreams: false})
     const buf = Buffer.from(pdfBytes.buffer);
+
+    return buf
+}
+
+
+
+fastify.get("/voucherPreview", async function (request, reply) {
+
+    const params = request.query;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000' } = params;
+
+    const pdfBuffer = await createPDF(language, amount, classes, code)
+
     reply
         .type('application/pdf')
-        .send(buf)
+        .send(pdfBuffer)
 
 
 
@@ -208,135 +214,13 @@ fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
     const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000' } = params;
-    const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
 
     // Create ZIP from buffer
     const zip = new JSZip();
 
     for (const codeElement of code.split(',')) {
-        console.log(codeElement);
-
-        console.log('Creating PDF')
-        const pdfDoc = await pdflib.PDFDocument.create()
-        pdfDoc.registerFontkit(fontkit)
-        const helveticaFont = await pdfDoc.embedFont(pdflib.StandardFonts.HelveticaBold)
-        const timesRomanFont = await pdfDoc.embedFont(pdflib.StandardFonts.TimesRoman)
-        const fontBytes = await fs.readFileSync('./public/font/SanomatSans-Medium.otf')
-        const fontRegularBytes = await fs.readFileSync('./public/font/SanomatSans-Regular.otf')
-        const customFont = await pdfDoc.embedFont(fontBytes)
-        const regularFont = await pdfDoc.embedFont(fontRegularBytes)
-
-        const page = pdfDoc.addPage()
-        page.setSize(2598,1299)
-        const { width, height } = page.getSize()
-        const fontSize = 30
-
-
-        console.log('Drawing image')
-        const backgroundUrl = `${seo.url}/${language}_voucher.png`
-        const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
-        const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
-        const backgroundDims = backgroundImage.scale(0.5)
-        page.drawImage(backgroundImage, {
-            x: 0,
-            y: 0,
-            width: backgroundImage.width,
-            height: backgroundImage.height,
-        })
-
-        /*console.log('Drawing egg image')
-        const humptyImageBytes = await fetch("https://static.wikia.nocookie.net/shrek/images/5/56/Humpty_Dumpty.png/revision/latest?cb=20111130083330").then((res) => res.arrayBuffer())
-        const humptyImage = await pdfDoc.embedPng(humptyImageBytes)
-        const humptyDims = humptyImage.scale(0.5)
-        page.drawImage(humptyImage, {
-            x: 2500,
-            y: 0,
-            width: 68,
-            height: 100,
-        })*/
-
-
-        let classesArray = classes.split(',')
-
-        // allow only valid classes (eco, ecoplus, bus, pre)
-        classesArray = classesArray.filter((c) => ['eco', 'ecoplus', 'bus', 'pre'].includes(c))
-
-        // if no valid classes, default to eco
-        if (classesArray.length === 0) classesArray = ['eco']
-
-        // rename classes based on language
-        classesArray = classesArray.map((c) => {
-            switch (c) {
-                case 'eco':
-                    return 'Economy';
-                case 'ecoplus':
-                    return 'Economy Plus';
-                case 'bus':
-                    return 'Business';
-                case 'pre':
-                    return 'Premium';
-            }
-        });
-
-        // determine "or" text in languages
-        let orMap = {
-            cs: 'nebo',
-            pl: 'lub',
-            sk: 'alebo',
-            de: 'oder',
-            en: 'or',
-            ru: 'или',
-            ua: 'або'
-        }
-
-        let classesText = classesArray.map((c, i) => {
-            let text = ''
-            if (i === 0) {
-                text = c
-            } else if (i === classesArray.length - 1) {
-                text = ` ${orMap[language]} ${c}`
-            } else {
-                text = `, ${c}`
-            }
-            return text
-        }).join('')
-
-
-
-        const textSubtitle = textSubtitleMap[language]
-
-        page.drawText(textSubtitle, {
-            x: 115,
-            y: 243,
-            size: 32,
-            font: regularFont,
-            color: pdflib.rgb(87/255, 87/255, 87/255),
-            lineHeight: 40,
-        })
-
-
-        console.log('Drawing text')
-        page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
-            x: 115,
-            y: 445,
-            size: 165,
-            font: customFont,
-            color: pdflib.rgb(205/255, 135/255, 47/255),
-        })
-
-        console.log('Drawing text')
-        page.drawText(`${codeElement}`, {
-            x: 2477,
-            y: 350,
-            size: 90,
-            font: timesRomanFont,
-            rotate: pdflib.degrees(90),
-        })
-
-        console.log('Saving PDF')
-        const pdfBytes = await pdfDoc.save({useObjectStreams: false})
-        const buf = Buffer.from(pdfBytes.buffer);
-        zip.file(`voucher_${codeElement}.pdf`, buf);
+        const pdfBuffer = await createPDF(language, amount, classes, codeElement)
+        zip.file(`voucher_${codeElement}.pdf`, pdfBuffer);
     }
 
 
