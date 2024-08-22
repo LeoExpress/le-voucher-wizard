@@ -313,7 +313,7 @@ fastify.get("/vizitkyPreview", async function (request, reply) {
 
 
     console.log('Drawing image')
-    const backgroundImageBytes = await fs.readFileSync('./public/le_vizitka.pdf')
+    const backgroundImageBytes = await fs.readFileSync('./public/le_vizitka_new.pdf')
     const [backgroundImage] = await pdfDoc.embedPdf(backgroundImageBytes)
     page.drawPage(backgroundImage)
 
