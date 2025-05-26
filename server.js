@@ -171,14 +171,23 @@ const createPDF = async (language, amount, classes, code) => {
     })
 
     console.log('Drawing text')
-    page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
-        x: 115,
-        y: 445,
-        size: 165,
-        font: customFont,
-        color: pdflib.rgb(205/255, 135/255, 47/255),
-    })
-
+    if (language === 'hu') {
+        page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
+            x: 170,
+            y: 445,
+            size: 165,
+            font: customFont,
+            color: pdflib.rgb(205 / 255, 135 / 255, 47 / 255),
+        })
+    }else {
+        page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
+            x: 115,
+            y: 445,
+            size: 165,
+            font: customFont,
+            color: pdflib.rgb(205 / 255, 135 / 255, 47 / 255),
+        })
+    }
     console.log('Drawing text')
     if (language === 'hu') {
         page.drawText(`${code}`, {
