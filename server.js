@@ -186,7 +186,7 @@ const createPDF = async (language, amount, classes, code) => {
             y: 90,                  // posun níže k dolnímu okraji rámečku
             size: 45,
             font: timesRomanFont,
-            color: rgb(0, 0, 1),    // čistě modrá barva
+
         });
     } else {
         page.drawText(`${code}`, {
