@@ -74,7 +74,11 @@ const createPDF = async (language, amount, classes, code) => {
     const regularFont = await pdfDoc.embedFont(fontRegularBytes)
 
     const page = pdfDoc.addPage()
-    page.setSize(2598,1299)
+    if (language === 'hu') {
+        page.setSize(2362, 1181); // nebo jiný rozměr specifický pro HU variantu
+    } else {
+        page.setSize(2598, 1299); // výchozí velikost pro ostatní
+    }
     const { width, height } = page.getSize()
     const fontSize = 30
 
