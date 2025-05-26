@@ -50,7 +50,7 @@ const textSubtitleMap = (language, classesText) => {
         de: `Der Geschenkgutschein ist für die ${classesText} Klasse gültig. Er kann wiederholt für den Kauf von Fahrkarten verwendet werden, bis sein Wert erschöpft ist. Geben Sie die Gutscheinnummer auf der Website le.cz im Abschnitt Zahlung ein. Um Ihr Guthaben zu überprüfen, loggen Sie sich in Ihr Smile-Club-Konto ein und wählen Sie in der Rubrik Meine leo-Gutschriften den Unterabschnitt Credit Bank, um die Gutscheinnummer einzugeben. Sollten Sie Probleme haben, wenden Sie sich bitte an info@le.cz`,
         ua: `Подарунковий ваучер дійсний для ${classesText} класу. Його можна використовувати для придбання квитків багаторазово, доки не буде вичерпано його вартість. Введіть номер ваучера на сайті le.cz у розділі Оплата. Щоб перевірити баланс, увійдіть до свого облікового  запису Smile Club і виберіть підрозділ Кредитний банк у розділі Мої кредити leo, щоб ввести номер ваучера.  Якщо у вас виникли проблеми, будь ласка, зверніться за адресою info@le.cz.`,
         cn: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits section to enter the voucher number. If you have any problems, please contact info@le.cz`,
-        hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
+      // hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
 
     }
     return map[language]
@@ -179,13 +179,23 @@ const createPDF = async (language, amount, classes, code) => {
     })
 
     console.log('Drawing text')
-    page.drawText(`${code}`, {
-        x: 2477,
-        y: 350,
-        size: 90,
-        font: timesRomanFont,
-        rotate: pdflib.degrees(90),
-    })
+    if (language === 'hu') {
+        page.drawText(`${code}`, {
+            x: 120, // jiné X (příklad)
+            y: 260,  // jiné Y (příklad)
+            size: 85,
+            font: timesRomanFont,
+
+        });
+    } else {
+        page.drawText(`${code}`, {
+            x: 2477,
+            y: 350,
+            size: 90,
+            font: timesRomanFont,
+            rotate: pdflib.degrees(90),
+        });
+    }
 
     console.log('Saving PDF')
     const pdfBytes = await pdfDoc.save({useObjectStreams: false})
