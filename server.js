@@ -182,11 +182,11 @@ const createPDF = async (language, amount, classes, code) => {
     console.log('Drawing text')
     if (language === 'hu') {
         page.drawText(`${code}`, {
-            x: 120, // jiné X (příklad)
-            y: 260,  // jiné Y (příklad)
-            size: 85,
+            x: 150,                 // mírně zprava od levého okraje rámečku
+            y: 90,                  // posun níže k dolnímu okraji rámečku
+            size: 45,
             font: timesRomanFont,
-
+            color: rgb(0, 0, 1),    // čistě modrá barva
         });
     } else {
         page.drawText(`${code}`, {
