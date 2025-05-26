@@ -8,7 +8,7 @@ Simple REST service for creating vouchers for Leo Express. It also provides a si
 ### Query Parameters
     code => Actual voucher code i.e. 1234567890 or for multiple codes use , as delimeter i.e. 11111,22222,3333
     amount => Amount of voucher
-    language => Language of voucher [cs, sk, en, pl, de, ua]
+    language => Language of voucher [cs, sk, en, pl, de, ua, hu]
     classes => Valid shortnames for classes, separated by comma i.e. [eco,ecoplus,bus,pre] 
 ####
     Example URL:

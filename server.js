@@ -138,7 +138,8 @@ const createPDF = async (language, amount, classes, code) => {
         de: 'oder',
         en: 'or',
         ru: 'или',
-        ua: 'або'
+        ua: 'або',
+        hu: 'vagy'
     }
 
     let classesText = classesArray.map((c, i) => {
