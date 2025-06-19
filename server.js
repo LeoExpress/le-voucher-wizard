@@ -50,15 +50,14 @@ const textSubtitleMap = (language, classesText) => {
         de: `Der Geschenkgutschein ist für die ${classesText} Klasse gültig. Er kann wiederholt für den Kauf von Fahrkarten verwendet werden, bis sein Wert erschöpft ist. Geben Sie die Gutscheinnummer auf der Website le.cz im Abschnitt Zahlung ein. Um Ihr Guthaben zu überprüfen, loggen Sie sich in Ihr Smile-Club-Konto ein und wählen Sie in der Rubrik Meine leo-Gutschriften den Unterabschnitt Credit Bank, um die Gutscheinnummer einzugeben. Sollten Sie Probleme haben, wenden Sie sich bitte an info@le.cz`,
         ua: `Подарунковий ваучер дійсний для ${classesText} класу. Його можна використовувати для придбання квитків багаторазово, доки не буде вичерпано його вартість. Введіть номер ваучера на сайті le.cz у розділі Оплата. Щоб перевірити баланс, увійдіть до свого облікового  запису Smile Club і виберіть підрозділ Кредитний банк у розділі Мої кредити leo, щоб ввести номер ваучера.  Якщо у вас виникли проблеми, будь ласка, зверніться за адресою info@le.cz.`,
         cn: `The gift voucher is valid for ${classesText} class. It can be used to purchase tickets repeatedly until its value is exhausted. Enter the voucher number on the website le.cz in the Payment section. To check your balance, log into your Smile Club account and select the Credit Bank subsection in the My leo credits section to enter the voucher number. If you have any problems, please contact info@le.cz`,
-        hu: '',
-      // hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
+        hu: `Az ajándékutalvány ${classesText} osztályra érvényes. Többször is felhasználható jegyek vásárlására, amíg az értéke el nem fogy. Adja meg az utalvány számát a le.cz weboldalon a Fizetés rovatban. Az egyenleg ellenőrzéséhez jelentkezzen be Smile Club fiókjába, és a My leo kreditek résznél válassza a Hitelbank alfejezetet, ahol adja meg az utalvány számát. Ha bármilyen problémája van, kérjük, forduljon a info@le.cz címre.`,
 
     }
     return map[language]
 }
 
 
-const createPDF = async (language, amount, classes, code) => {
+    const createPDF = async (language, amount, classes, code,deleted_at_submit = '') => {
     const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
 
 
@@ -74,11 +73,11 @@ const createPDF = async (language, amount, classes, code) => {
     const regularFont = await pdfDoc.embedFont(fontRegularBytes)
 
     const page = pdfDoc.addPage()
-    if (language === 'hu') {
+  //  if (language === 'hu') {
         page.setSize(2362, 1181); // nebo jiný rozměr specifický pro HU variantu
-    } else {
+   /* } else {
         page.setSize(2598, 1299); // výchozí velikost pro ostatní
-    }
+    }*/
     const { width, height } = page.getSize()
     const fontSize = 30
 
@@ -163,19 +162,33 @@ const createPDF = async (language, amount, classes, code) => {
 
 
     const textSubtitle = textSubtitleMap(language, classesText)
+   // if (language === 'hu') {
+        page.drawText(textSubtitle, {
+            x: 175,
+            y: 135,
+            size: 18,
+            font: language !== 'ua' ? regularFont : arialFont,
+            color: pdflib.rgb(87 / 255, 87 / 255, 87 / 255),
+            lineHeight: 21,
+            maxWidth: 880
+        })
 
+
+
+/*}else{
     page.drawText(textSubtitle, {
         x: 115,
         y: 243,
         size: 32,
         font: language !== 'ua' ? regularFont : arialFont,
-        color: pdflib.rgb(87/255, 87/255, 87/255),
+        color: pdflib.rgb(87 / 255, 87 / 255, 87 / 255),
         lineHeight: 40,
         maxWidth: 1750
     })
 
+    }*/
     console.log('Drawing text')
-    if (language === 'hu') {
+  //  if (language === 'hu') {
         page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
             x: 170,
             y: 350,
@@ -183,7 +196,7 @@ const createPDF = async (language, amount, classes, code) => {
             font: customFont,
             color: pdflib.rgb(205 / 255, 135 / 255, 47 / 255),
         })
-    }else {
+    /*}else {
         page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
             x: 115,
             y: 445,
@@ -191,17 +204,17 @@ const createPDF = async (language, amount, classes, code) => {
             font: customFont,
             color: pdflib.rgb(205 / 255, 135 / 255, 47 / 255),
         })
-    }
+    }*/
     console.log('Drawing text')
-    if (language === 'hu') {
+  //  if (language === 'hu') {
         page.drawText(`${code}`, {
-            x: 190,                 // mírně zprava od levého okraje rámečku
+            x: 175,                 // mírně zprava od levého okraje rámečku
             y: 180,                  // posun níže k dolnímu okraji rámečku
-            size: 60,
-            font: timesRomanFont,
+            size: 50,
+            font: customFont, //timesRomanFont,
            // color: pdflib.rgb(205/255, 135/255, 47/255),
         });
-    } else {
+    /*} else {
         page.drawText(`${code}`, {
             x: 2477,
             y: 350,
@@ -209,8 +222,16 @@ const createPDF = async (language, amount, classes, code) => {
             font: timesRomanFont,
             rotate: pdflib.degrees(90),
         });
-    }
-
+    }*/
+  //  if (language === 'hu') {
+        page.drawText(`${deleted_at_submit}`, {
+            x: 610,                 // mírně zprava od levého okraje rámečku
+            y: 180,                  // posun níže k dolnímu okraji rámečku
+            size: 50,
+            font: customFont, //timesRomanFont,
+            // color: pdflib.rgb(205/255, 135/255, 47/255),
+        });
+    //}
     console.log('Saving PDF')
     const pdfBytes = await pdfDoc.save({useObjectStreams: false})
     const buf = Buffer.from(pdfBytes.buffer);
@@ -219,13 +240,12 @@ const createPDF = async (language, amount, classes, code) => {
 }
 
 
-
 fastify.get("/voucherPreview", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000' } = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '' } = params;
 
-    const pdfBuffer = await createPDF(language, amount, classes, code)
+    const pdfBuffer = await createPDF(language, amount, classes, code,deleted_at_submit)
 
     reply
         .type('application/pdf')
@@ -238,13 +258,13 @@ fastify.get("/voucherPreview", async function (request, reply) {
 fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000' } = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '' } = params;
 
     // Create ZIP from buffer
     const zip = new JSZip();
 
     for (const codeElement of code.split(',')) {
-        const pdfBuffer = await createPDF(language, amount, classes, codeElement)
+        const pdfBuffer = await createPDF(language, amount, classes, codeElement,deleted_at_submit )
         zip.file(`voucher_${codeElement}.pdf`, pdfBuffer);
     }
 
@@ -295,10 +315,11 @@ fastify.post("/", function (request, reply) {
     // Build the params object to pass to the template
     let viewParams = { seo: seo };
 
-    const { amount, currency, code, language, classes } = request.body;
-    const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}&classes=${classes}`;
-    const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}&classes=${classes}`;
-    viewParams = {amount, currency, code, language, url, urlPreview, classes, ...viewParams};
+    const { amount, currency, code, language, classes,deleted_at_submit = '' } = request.body;
+
+    const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}&classes=${classes}&deleted_at_submit=${deleted_at_submit}`;
+    const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}&classes=${classes}&deleted_at_submit=${deleted_at_submit}`;
+    viewParams = {amount, currency, code, language, url, urlPreview, classes, deleted_at_submit, ...viewParams};
 
     console.log(viewParams)
     // The Handlebars template will use the parameter values to update the page with the chosen color
