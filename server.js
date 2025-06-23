@@ -58,8 +58,8 @@ const textSubtitleMap = (language, classesText) => {
 
 
     const createPDF = async (language, amount, classes, code,deleted_at_submit = '') => {
-    const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
-
+    //const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
+        const currency ='Kč';
 
     console.log('Creating PDF')
     const pdfDoc = await pdflib.PDFDocument.create()
@@ -194,7 +194,7 @@ const textSubtitleMap = (language, classesText) => {
             y: 350,
             size: 165,
             font: customFont,
-            color: pdflib.rgb(205 / 255, 135 / 255, 47 / 255),
+            color: pdflib.rgb(240 / 255, 130 / 255, 0 / 255),
         })
     /*}else {
         page.drawText(`${amount.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} ${currency}`, {
