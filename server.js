@@ -57,9 +57,31 @@ const textSubtitleMap = (language, classesText) => {
 }
 
 
-    const createPDF = async (language, amount, classes, code,deleted_at_submit = '') => {
-    //const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
-        const currency ='Kč';
+    const createPDF = async (language, amount, classes, code,deleted_at_submit = '',pln=0,eur=0) => {
+    const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
+
+    let numAmount = Number(amount);
+        // Úprava kurzu podle jazyka
+        if (language === 'cs') {
+           // numAmount = numAmount ; // Kč
+        } else if (language === 'pl') {
+            if (pln > 0) {
+                numAmount= Math.round(numAmount / pln); // PLN
+            }else {
+                numAmount = Math.round(numAmount / 5); //zl pokud není kurz poslaný z levisu
+            }
+        } else {
+            if (eur > 0) {
+                numAmount = Math.round(numAmount / eur); // EUR
+            }else {
+                Math.round(numAmount = numAmount / 25); //eu
+            }
+
+        }
+
+        // Zpět na řetězec
+        amount =  parseFloat(numAmount.toFixed(2)).toString();
+
 
     console.log('Creating PDF')
     const pdfDoc = await pdflib.PDFDocument.create()
@@ -243,9 +265,9 @@ const textSubtitleMap = (language, classesText) => {
 fastify.get("/voucherPreview", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '' } = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '',pln=0,eur=0 } = params;
 
-    const pdfBuffer = await createPDF(language, amount, classes, code,deleted_at_submit)
+    const pdfBuffer = await createPDF(language, amount, classes, code,deleted_at_submit,pln,eur)
 
     reply
         .type('application/pdf')
@@ -258,13 +280,13 @@ fastify.get("/voucherPreview", async function (request, reply) {
 fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '' } = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '', pln=0,eur=0} = params;
 
     // Create ZIP from buffer
     const zip = new JSZip();
 
     for (const codeElement of code.split(',')) {
-        const pdfBuffer = await createPDF(language, amount, classes, codeElement,deleted_at_submit )
+        const pdfBuffer = await createPDF(language, amount, classes, codeElement,deleted_at_submit,pln,eur )
         zip.file(`voucher_${codeElement}.pdf`, pdfBuffer);
     }
 
@@ -315,11 +337,11 @@ fastify.post("/", function (request, reply) {
     // Build the params object to pass to the template
     let viewParams = { seo: seo };
 
-    const { amount, currency, code, language, classes,deleted_at_submit = '' } = request.body;
+    const { amount, currency, code, language, classes,deleted_at_submit = '' ,pln=0,eur=0} = request.body;
 
-    const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}&classes=${classes}&deleted_at_submit=${deleted_at_submit}`;
-    const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}&classes=${classes}&deleted_at_submit=${deleted_at_submit}`;
-    viewParams = {amount, currency, code, language, url, urlPreview, classes, deleted_at_submit, ...viewParams};
+    const url = `${seo.url}/voucher?amount=${amount}&code=${code}&language=${language}&classes=${classes}&deleted_at_submit=${deleted_at_submit}&pln=${pln}&eur=${eur}`;
+    const urlPreview = `${seo.url}/voucherPreview?amount=${amount}&code=${code}&language=${language}&classes=${classes}&deleted_at_submit=${deleted_at_submit}&pln=${pln}&eur=${eur}`;
+    viewParams = {amount, currency, code, language, url, urlPreview, classes, deleted_at_submit,pln,eur, ...viewParams};
 
     console.log(viewParams)
     // The Handlebars template will use the parameter values to update the page with the chosen color
