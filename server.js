@@ -74,7 +74,7 @@ const textSubtitleMap = (language, classesText) => {
             if (eur > 0) {
                 numAmount = Math.round(numAmount / eur); // EUR
             }else {
-                Math.round(numAmount = numAmount / 25); //eu
+                Math.round(numAmount = numAmount / 24); //eu
             }
 
         }
