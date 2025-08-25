@@ -232,7 +232,7 @@ const textSubtitleMap = (language, classesText) => {
         page.drawText(`${code}`, {
             x: 175,                 // mírně zprava od levého okraje rámečku
             y: 180,                  // posun níže k dolnímu okraji rámečku
-            size: 50,
+            size: 45,
             font: customFont, //timesRomanFont,
            // color: pdflib.rgb(205/255, 135/255, 47/255),
         });
@@ -249,7 +249,7 @@ const textSubtitleMap = (language, classesText) => {
         page.drawText(`${deleted_at_submit}`, {
             x: 610,                 // mírně zprava od levého okraje rámečku
             y: 180,                  // posun níže k dolnímu okraji rámečku
-            size: 50,
+            size: 45,
             font: customFont, //timesRomanFont,
             // color: pdflib.rgb(205/255, 135/255, 47/255),
         });
