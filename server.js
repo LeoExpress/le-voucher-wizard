@@ -57,12 +57,15 @@ const textSubtitleMap = (language, classesText) => {
 }
 
 
-    const createPDF = async (language, amount, classes, code,deleted_at_submit = '',pln=0,eur=0) => {
-    const currency = language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€';
+    const createPDF = async (language, amount, classes, code,deleted_at_submit = '',pln=0,eur=0,percent=0) => {
+        const currency =
+            Number(percent) === 1
+                ? '%'
+                : (language === 'cs' ? 'Kč' : language === 'pl' ? 'zł' : '€');
 
     let numAmount = Number(amount);
         // Úprava kurzu podle jazyka
-        if (language === 'cs') {
+        if (language === 'cs' || currency==='%') {
            // numAmount = numAmount ; // Kč
         } else if (language === 'pl') {
             if (pln > 0) {
@@ -265,9 +268,9 @@ const textSubtitleMap = (language, classesText) => {
 fastify.get("/voucherPreview", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '',pln=0,eur=0 } = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '',pln=0,eur=0,percent=0 } = params;
 
-    const pdfBuffer = await createPDF(language, amount, classes, code,deleted_at_submit,pln,eur)
+    const pdfBuffer = await createPDF(language, amount, classes, code,deleted_at_submit,pln,eur,percent)
 
     reply
         .type('application/pdf')
@@ -280,13 +283,13 @@ fastify.get("/voucherPreview", async function (request, reply) {
 fastify.get("/voucher", async function (request, reply) {
 
     const params = request.query;
-    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '', pln=0,eur=0} = params;
+    const { language = 'cs', amount = '1000', classes = 'eco,ecoplus,bus,pre', code = '000000000000',deleted_at_submit = '', pln=0,eur=0,percent=0} = params;
 
     // Create ZIP from buffer
     const zip = new JSZip();
 
     for (const codeElement of code.split(',')) {
-        const pdfBuffer = await createPDF(language, amount, classes, codeElement,deleted_at_submit,pln,eur )
+        const pdfBuffer = await createPDF(language, amount, classes, codeElement,deleted_at_submit,pln,eur,percent )
         zip.file(`voucher_${codeElement}.pdf`, pdfBuffer);
     }
 
