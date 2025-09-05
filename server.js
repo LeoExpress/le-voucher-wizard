@@ -514,6 +514,16 @@ fastify.post("/vizitky", function (request, reply) {
         urlBack = `${seo.url}/zadni_cestujte_sk.pdf`;
     } else if (back === 'inzerce') {
         urlBack = `${seo.url}/zadni_inzerce.pdf`;
+    } else if (back === 'primy_vlak_pl') {
+        urlBack = `${seo.url}/le_kampane_destinace_polsko_2025-08_vizitky_varsava_85×55mm_CMYK_spad-5mm_PL_tisk.pdf`;
+    } else if (back === 'cestujte_pl') {
+        urlBack = `${seo.url}/le_kampane_destinace_polsko_2025-08_vizitky_85×55mm_CMYK_spad-5mm_cestujte_PL_tisk.pdf`;
+    } else if (back === 'corporate_pl') {
+        urlBack = `${seo.url}/le_kampane_destinace_polsko_2025-08_vizitky_85×55mm_CMYK_spad-5mm_korporati_PL_tisk-3.pdf`;
+    } else if (back === 'app_pl') {
+        urlBack = `${seo.url}/zadni_app_pl.pdf`;
+    } else if (back === 'inzerce_pl') {
+        urlBack = `${seo.url}/le_kampane_destinace_polsko_2025-08_vizitky_85×55mm_CMYK_spad-5mm_reklama-videt_PL_tisk.pdf`;
     }
 
 
