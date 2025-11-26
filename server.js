@@ -112,10 +112,11 @@ const textSubtitleMap = (language, classesText) => {
     //const backgroundImageBytes = await fetch(backgroundUrl).then((res) => res.arrayBuffer())
 
     // load image from filesystem
-    const backgroundImageBytes = await fs.readFileSync(`./public/${language}_voucher.png`)
+    const backgroundImageBytes = await fs.readFileSync(`./public/${language}_voucher.jpg`)
 
 
-    const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
+    //const backgroundImage = await pdfDoc.embedPng(backgroundImageBytes)
+    const backgroundImage = await pdfDoc.embedJpg(backgroundImageBytes)
     const backgroundDims = backgroundImage.scale(0.5)
     page.drawImage(backgroundImage, {
         x: 0,
